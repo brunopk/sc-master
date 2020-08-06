@@ -6,3 +6,9 @@ class Effect(models.Model):
 
     class Meta:
         db_table = 'effect'
+
+
+class User(models.Model):
+
+    username = models.CharField(max_length=50)
+    token = models.UUIDField()
