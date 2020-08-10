@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'drf_yasg',
+    'corsheaders',
     'oauth2_provider',
     'rest_framework',
     'app'
@@ -59,6 +60,7 @@ REST_FRAMEWORK = {
 LOGIN_URL = '/api-auth/login'
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -150,3 +152,6 @@ SWAGGER_SETTINGS = {
    }
 }
 
+CORS_ORIGIN_WHITELIST = [
+    "http://localhost:3000",
+]
