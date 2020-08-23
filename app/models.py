@@ -1,14 +1,10 @@
 from django.db import models
+from django.contrib.auth.models import AbstractUser
 
 class Effect(models.Model):
 
     effect = models.CharField(max_length=50)
 
-    class Meta:
-        db_table = 'effect'
-
-
-class User(models.Model):
-
-    username = models.CharField(max_length=50)
-    token = models.UUIDField()
+# Attributes added to this model will be added to django.contrib.auth.models.AbstractUser (default user model in Django)
+class User(AbstractUser):
+    pass

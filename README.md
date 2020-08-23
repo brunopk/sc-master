@@ -101,6 +101,7 @@ More information: https://core-electronics.com.au/tutorials/ws2812-addressable-l
 
 - PostgreSQL (currently it's working with Sqlite).
 - Generalize @swagger_auto_schema(status.HTTP_400_BAD_REQUEST: serializers.ErrorResponse()}) for all APIViews
+- Implement endpoint for token refreshing
 
 ## Links
 

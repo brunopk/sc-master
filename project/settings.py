@@ -48,8 +48,11 @@ OAUTH2_PROVIDER = {
     # this is the list of available scopes
     'SCOPES': {'read': 'Read scope', 'write': 'Write scope', 'groups': 'Access to your groups'},
     'OAUTH2_BACKEND_CLASS': 'oauth2_provider.oauth2_backends.JSONOAuthLibCore'
-
 }
+
+ACCESS_TOKEN_EXPIRE_SECONDS = 3600
+TOKEN_SCOPE = 'read write'
+CLIENT_ID = 'Amgu1SN82Klhns7i7XH8jnUWh66bPhAVHSbvCPyb'
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
@@ -155,3 +158,6 @@ SWAGGER_SETTINGS = {
 CORS_ORIGIN_WHITELIST = [
     "http://localhost:3000",
 ]
+
+
+AUTH_USER_MODEL = 'app.User'

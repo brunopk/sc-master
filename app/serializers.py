@@ -19,16 +19,23 @@ class ErrorResponse(serializers.Serializer):
     def update(self, instance, validated_data):
         raise NotImplemented()
 
-class LoginDataRequest(serializers.Serializer):
+class GetTokenRequest(serializers.Serializer):
 
     username = serializers.CharField(required=True)
     password = serializers.CharField(required=True)
+    grant_type = serializers.CharField(default='password')
+
+    def update(self, instance, validated_data):
+        raise NotImplemented()
+
+    def create(self, validated_data):
+        raise NotImplemented()
 
 
+class GetTokenResponse(serializers.Serializer):
 
-class LoginDataResponse(serializers.Serializer):
-
-    token = serializers.UUIDField()
+    token = serializers.CharField()
+    refresh_token = serializers.CharField()
 
     def create(self, validated_data):
         raise NotImplemented()
