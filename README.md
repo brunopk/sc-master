@@ -64,8 +64,8 @@ Request body example :
 ```json
 {
     "username": "admin",
-	"password": "admin",
-	"client_id" : "QhRNkdPf6v5KXkR4huEi7grQoQDLigHcX7sVGKV9",
+    "password": "admin",
+    "client_id" : "QhRNkdPf6v5KXkR4huEi7grQoQDLigHcX7sVGKV9",
     "client_secret": "1yTSz4BSnl1EjItbNsgrFHvsGfH5s89Cc48P4PJCOZuoeC9f55d082nwsfaz2Iw45vdVRmZM0rr7C1vaLzY17IQ8YKRiB7RsFZVmnqDkfoNsOX5IDBgOwhUuhz4mR6KW",
     "grant_type": "password"
 }
