@@ -79,22 +79,11 @@ Request body example :
 
 More information at: https://github.com/axnsan12/drf-yasg
 
-> To authenticate swagger, get the token with `curl` or Postman, copy-paste it on the authorization dialog and add 
-> "Bearer " at the beginning, for instance "Bearer PnoA4DtzklANjjcrOrUxQoKXIv6ajc".  
+To authenticate swagger, get the token with `curl` or Postman, copy-paste it on the authorization dialog and add 
+"Bearer " at the beginning, for instance "Bearer PnoA4DtzklANjjcrOrUxQoKXIv6ajc" :
 
+![Swagger online documentation](doc/swagger.png)
 
-
-## Building the circuit
-
-1. With level shifter conversor:
-
-![GitHub Logo](/doc/Raspberry-Pi-WS2812-Steckplatine-600x361.png)
-
-More information: https://tutorials-raspberrypi.com/connect-control-raspberry-pi-ws2812-rgb-led-strips/
-
-2. Without level shifter conversor: 
-![GitHub Logo](/doc/raspberry-pi-updated-schematic.png)
-More information: https://core-electronics.com.au/tutorials/ws2812-addressable-leds-raspberry-pi-quickstart-guide.html
 
 
 ## Future improvements:
@@ -108,6 +97,3 @@ More information: https://core-electronics.com.au/tutorials/ws2812-addressable-l
 - [Creation of virtual environments](https://docs.python.org/3/library/venv.html)
 - [Quickstar Django REST Framework](http://www.django-rest-framework.org/tutorial/quickstart/)
 - [Django Rest Framework » Getting started](https://django-oauth-toolkit.readthedocs.io/en/latest/rest-framework/getting_started.html)
-- https://github.com/axnsan12/drf-yasg)
-- https://github.com/rpi-ws281x/rpi-ws281x-python 
-- http://github.com/richardghirst/rpi_ws281x
