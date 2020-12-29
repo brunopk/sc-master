@@ -1,6 +1,6 @@
 # Strip Controller Master
 
-Provides a backend as a REST API for the [sc-web](https://github.com/brunopk/sc-web) built with [Django Rest Framework](https://django-rest-framework.org) for the Python 3.8.
+Provides a backend as a REST API for the [sc-web](https://github.com/brunopk/sc-web) built with [Django Rest Framework](https://django-rest-framework.org) for Python 3.8.
 
 ## Starting the API
 
