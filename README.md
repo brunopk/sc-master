@@ -1,8 +1,6 @@
 # Strip Controller Master
 
-This is part of the Strip Controller (sc) project and provides a backend as a REST API for the 
-[sc-web](https://github.com/brunopk/sc-web). It's created with [Django Rest Framework](https://django-rest-framework.org) 
-and Python 3.8.x.
+Provides a backend as a REST API for the [sc-web](https://github.com/brunopk/sc-web). It's created with [Django Rest Framework](https://django-rest-framework.org) and Python 3.8.x.
 
 ## Starting the API
 
