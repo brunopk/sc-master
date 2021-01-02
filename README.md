@@ -6,14 +6,30 @@ Provides a backend as a REST API for the [sc-web](https://github.com/brunopk/sc-
 
 1. Create a virtual environment (venv) if it's not created yet.
 2. Activate the venv: `source <path of the venv>/bin/activate`.
-3. Install dependencies: `pip install -r requirements.txt`
-4. Create database: `python manage.py migrate`
-5. Create a superuser for Django Rest Framework.
-6. Init the server: `python manage.py runserver`
-7. Register consumer applications for OAuth2.  
+3. Install dependencies: `pip install -r requirements.txt`.
+4. Create migrations on `app/migrations` : python manage.py makemigrations`.
+5. Create database and apply migrations: `python manage.py migrate`.
+6. Create a superuser for Django Rest Framework.
+7. Configure the API (see section *Configuration*).
+8. Init the server: `python manage.py runserver`
+9. Register consumer applications for OAuth2 (if wasn't done before).  
 
-> The output of `python manage.py runserver` will show URL and port, by default it run on http://localhost:8000. 
-> Open it on any browser to see API documentation. 
+The output of `python manage.py runserver` will show URL and port, default is http://localhost:8000 (open it on any browser to see API documentation).`Steps 4 y 5 are only required the first time running the server or when adding new models (see also *Creating new models*).
+
+
+### Configuration
+
+Most properties are defined as constants on `project/settings.py` .
+
+Connection to [sc-driver](https://github.com/brunopk/sc-driver) is disabled by default. To enable it and avoid establishing multiple connections:
+
+1. Set `SC_CONNECTION_DISABLED = True` on `project/settings.py` 
+2. Run django with `--noreload` argument: `python manage.py runserver --noreload`.
+
+To run in development mode with hot-reloading (without using [sc-driver](https://github.com/brunopk/sc-driver)) :
+
+1. Set `SC_CONNECTION_DISABLED = False` on `project/settings.py` 
+2. Run django **without** arguments.
 
 ### Creating a virtual environment (venv)
 
@@ -40,32 +56,32 @@ a valid access_token first we must register an application. Point your browser a
 http://localhost:8000/o/applications/
 Click on the link to create a new application and fill the form with the following data:
 
-Name: just a name of your choice
-Client Type: confidential
-Authorization Grant Type: Resource owner password-based
-It will show the client secret and the client id.
+- Name: just a name of your choice
+- Client Type: confidential
+- Authorization Grant Type: Resource owner password-based
+
+It will show the client secret and the client id, put it `CLIENT_ID` variable on `project/settings.py`.
 
 
 ### Creating new models
 
 1. Create model class on `app/models.py`.
-2. Create migrations with `python manage.py makemigrations` command.
-3. Apply migrations to database `python manage.py migrate` command.
+2. Delete SQLite database (`./db.sqlite3`).
+3. Create migrations with `python manage.py makemigrations`.
+4. Apply migrations to database `python manage.py migrate`.
 
+To run the API again, repeat steps 6 y 7 mentioned on *Starting the API* to recreate OAuth2 configurations which are saved on database.
 
 ## Authentication
 
-URL :  http://localhost:8000/o/token/
+URL :  http://localhost:8000/token/
 
 Request body example : 
 
 ```json
 {
     "username": "admin",
-    "password": "admin",
-    "client_id" : "QhRNkdPf6v5KXkR4huEi7grQoQDLigHcX7sVGKV9",
-    "client_secret": "1yTSz4BSnl1EjItbNsgrFHvsGfH5s89Cc48P4PJCOZuoeC9f55d082nwsfaz2Iw45vdVRmZM0rr7C1vaLzY17IQ8YKRiB7RsFZVmnqDkfoNsOX5IDBgOwhUuhz4mR6KW",
-    "grant_type": "password"
+    "password": "admin"
 }
 ```
 
@@ -87,8 +103,10 @@ To authenticate swagger, get the token with `curl` or Postman, copy-paste it on 
 ## Future improvements:
 
 - PostgreSQL (currently it's working with Sqlite).
-- Generalize @swagger_auto_schema(status.HTTP_400_BAD_REQUEST: serializers.ErrorResponse()}) for all APIViews
-- Implement endpoint for token refreshing
+- Generalize @swagger_auto_schema(status.HTTP_400_BAD_REQUEST: serializers.ErrorResponse()}) for all APIViews.
+- Implement endpoint for token refreshing.
+- Periodically check if sc-driver is online.
+- Multiple user (not only and admin user).
 
 ## Links
 
