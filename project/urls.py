@@ -18,7 +18,7 @@ from django.conf.urls import url
 from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
-from app.views import Effect, GetToken
+from app.views import SetColor, Token
 
 
 schema_view = get_schema_view(
@@ -36,8 +36,8 @@ urlpatterns = [
     path('o/', include('oauth2_provider.urls', namespace='oauth2_provider')),
     url(r'^$', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
-    url(r'^effect$', Effect.as_view()),
-    url(r'^get-token', GetToken.as_view()),
+    url(r'^token', Token.as_view()),
+    url(r'^commands/set_color$', SetColor.as_view()),
     url(r'^swagger(?P<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=0), name='schema-json'),
     url(r'^swagger/$', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     url(r'^redoc/$', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),

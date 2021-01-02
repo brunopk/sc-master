@@ -1,13 +1,28 @@
 from rest_framework import serializers
-from app import models
 
-class Effect(serializers.ModelSerializer):
 
-    class Meta:
-        model = models.Effect
-        fields = '__all__'
+class CmdSetColor(serializers.Serializer):
 
-class ErrorResponse(serializers.Serializer):
+    section_id = serializers.UUIDField(required=False)
+    color = serializers.CharField(required=True)
+
+    def update(self, instance, validated_data):
+        pass
+
+    def create(self, validated_data):
+        pass
+
+
+class RespOk(serializers.Serializer):
+
+    def create(self, validated_data):
+        raise NotImplemented()
+
+    def update(self, instance, validated_data):
+        raise NotImplemented()
+
+
+class RespError(serializers.Serializer):
 
     code = serializers.IntegerField()
     message = serializers.CharField()
@@ -19,11 +34,11 @@ class ErrorResponse(serializers.Serializer):
     def update(self, instance, validated_data):
         raise NotImplemented()
 
-class GetTokenRequest(serializers.Serializer):
+
+class ReqToken(serializers.Serializer):
 
     username = serializers.CharField(required=True)
     password = serializers.CharField(required=True)
-    grant_type = serializers.CharField(default='password')
 
     def update(self, instance, validated_data):
         raise NotImplemented()
@@ -32,7 +47,7 @@ class GetTokenRequest(serializers.Serializer):
         raise NotImplemented()
 
 
-class GetTokenResponse(serializers.Serializer):
+class RespToken(serializers.Serializer):
 
     token = serializers.CharField()
     refresh_token = serializers.CharField()
