@@ -15,10 +15,10 @@ Including another URLconf
 """
 from django.urls import path, include
 from django.conf.urls import url
-from rest_framework import permissions
+from rest_framework import permissions, routers
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
-from app.views import SetColor, Token
+from app.views import CmdSetColor, Token, ResourceColor
 
 
 schema_view = get_schema_view(
@@ -31,13 +31,18 @@ schema_view = get_schema_view(
    permission_classes=(permissions.AllowAny,),
 )
 
+resources = routers.DefaultRouter()
+
+resources.register(r'color', ResourceColor)
+
 urlpatterns = [
     path('accounts/', include('django.contrib.auth.urls')),
     path('o/', include('oauth2_provider.urls', namespace='oauth2_provider')),
     url(r'^$', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     url(r'^token', Token.as_view()),
-    url(r'^commands/set_color$', SetColor.as_view()),
+    url(r'^commands/set_color$', CmdSetColor.as_view()),
+    url(r'^resources/', include(resources.urls)),
     url(r'^swagger(?P<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=0), name='schema-json'),
     url(r'^swagger/$', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     url(r'^redoc/$', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),

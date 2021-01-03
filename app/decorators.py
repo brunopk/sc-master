@@ -1,6 +1,8 @@
 from functools import wraps
 from rest_framework import status
 from rest_framework.response import Response
+from rest_framework.validators import ValidationError
+from django.http.response import Http404
 from logging import getLogger
 from app.serializers import RespError
 from app.enums import Error
@@ -20,6 +22,22 @@ def catch_errors():
             # self: instance of the class with the decorated method
             try:
                 return view_func(self, request, *args, **kwargs)
+            except Http404 as ex:
+                logger.info('Not found')
+                error = RespError({
+                    'code': int(Error.RESOURCE_NOT_FOUND),
+                    'message': str(Error.RESOURCE_NOT_FOUND),
+                    'description': str(ex)
+                })
+                return Response(error.data, status=status.HTTP_400_BAD_REQUEST)
+            except ValidationError as ex:
+                logger.info('Bad request')
+                error = RespError({
+                    'code': int(Error.BAD_REQUEST),
+                    'message': str(Error.BAD_REQUEST),
+                    'description': str(ex)
+                })
+                return Response(error.data, status=status.HTTP_400_BAD_REQUEST)
             except ScpApiError as ex:
                 logger.warning(f'SCP error {ex.status}: {ex.message}, {str(ex.result)}')
                 error = RespError({

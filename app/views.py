@@ -1,8 +1,8 @@
 from rest_framework.views import APIView
 from rest_framework import permissions, status
 from rest_framework.response import Response
-from app import serializers
-from app.models import scp
+from rest_framework.viewsets import ModelViewSet
+from app import serializers, models
 from app.decorators import catch_errors, serializer
 from app.enums import Error
 from project import settings
@@ -16,7 +16,27 @@ from django.db.models import Q
 from datetime import timedelta
 
 
-class SetColor(APIView):
+class ResourceColor(ModelViewSet):
+    serializer_class = serializers.ResColor
+    queryset = models.Color.objects.all()
+    permission_classes = [TokenHasReadWriteScope]
+    http_method_names = ['post', 'get', 'delete']
+
+    @catch_errors()
+    def create(self, request, *args, **kwargs):
+        return super(ResourceColor, self).create(request, *args, **kwargs)
+
+    @catch_errors()
+    def destroy(self, request, *args, **kwargs):
+        return super(ResourceColor, self).destroy(request, *args, **kwargs)
+
+    # noinspection PyShadowingNames
+    def list(self, request, *args, **kwargs):
+        serializer = self.get_serializer(models.Color.objects.all(), many=True)
+        return Response(serializer.data)
+
+
+class CmdSetColor(APIView):
 
     permission_classes = [TokenHasReadWriteScope]
 
@@ -33,7 +53,7 @@ class SetColor(APIView):
     def put(self, request, serialized_request):
         section_id = serialized_request.data.get('section_id')
         color = serialized_request.data.get('color')
-        scp.set_color(color, section_id)
+        models.scp.set_color(color, section_id)
         return Response({}, status=status.HTTP_200_OK)
 
 
