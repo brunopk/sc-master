@@ -1,15 +1,15 @@
 # Strip Controller Master
 
-Provides a backend as a REST API for the [sc-web](https://github.com/brunopk/sc-web) built with [Django Rest Framework](https://django-rest-framework.org) for Python 3.8.
+Provides a backend as a REST API for [sc-web](https://github.com/brunopk/sc-web). It's built on [Django Rest Framework](https://django-rest-framework.org) for Python 3.8.
 
 ## Starting the API
 
-1. Create a virtual environment (venv) if it's not created yet.
-2. Activate the venv: `source <path of the venv>/bin/activate`.
+1. Create a virtual environment (if wasn't done before).
+2. Activate the virtual environment: `source <path of the venv>/bin/activate`.
 3. Install dependencies: `pip install -r requirements.txt`.
 4. Create migrations on `app/migrations` : python manage.py makemigrations`.
 5. Create database and apply migrations: `python manage.py migrate`.
-6. Create a superuser for Django Rest Framework.
+6. Create Django superuser (see section *Creating Django superuser*).
 7. Configure the API (see section *Configuration*).
 8. Init the server: `python manage.py runserver`
 9. Register consumer applications for OAuth2 (if wasn't done before).  
@@ -21,12 +21,12 @@ The output of `python manage.py runserver` will show URL and port, default is ht
 
 Most properties are defined as constants on `project/settings.py` .
 
-Connection to [sc-driver](https://github.com/brunopk/sc-driver) is disabled by default. To enable it and avoid establishing multiple connections:
+Connection to [sc-rpi](https://github.com/brunopk/sc-rpi) is disabled by default to facilitate development. If you want to enable the connection again, for instance to probe the system with all components ([sc-rpi](https://github.com/brunopk/sc-rpi), [sc-master](https://github.com/brunopk/sc-master) and [sc-web](https://github.com/brunopk/sc-web)):
 
 1. Set `SC_CONNECTION_DISABLED = True` on `project/settings.py` 
 2. Run django with `--noreload` argument: `python manage.py runserver --noreload`.
 
-To run in development mode with hot-reloading (without using [sc-driver](https://github.com/brunopk/sc-driver)) :
+To disable connection to [sc-rpi](https://github.com/brunopk/sc-rpi) and run [sc-master](https://github.com/brunopk/sc-master) with hot-reloading again:
 
 1. Set `SC_CONNECTION_DISABLED = False` on `project/settings.py` 
 2. Run django **without** arguments.
@@ -43,7 +43,7 @@ or
 virtualenv -m <path to the python interpreter> <path of the venv>
 ```
 
-### Creating superuser for Django Rest Framework
+### Creating Django superuser
 
 ```python manage.py createsuperuser```
 
@@ -66,9 +66,9 @@ It will show the client secret and the client id, put it `CLIENT_ID` variable on
 ### Creating new models
 
 1. Create model class on `app/models.py`.
-2. Delete SQLite database (`./db.sqlite3`).
-3. Create migrations with `python manage.py makemigrations`.
-4. Apply migrations to database `python manage.py migrate`.
+2. Delete `db.sqlite3`.
+3. Create migrations: `python manage.py makemigrations`.
+4. Apply migrations on database: `python manage.py migrate`.
 
 To run the API again, repeat steps 6 y 7 mentioned on *Starting the API* to recreate OAuth2 configurations which are saved on database.
 
