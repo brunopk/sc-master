@@ -18,7 +18,9 @@ from django.conf.urls import url
 from rest_framework import permissions, routers
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
-from app.views import CmdSetColor, Token, ResourceColor
+from app.views.cmd_set_color import CmdSetColor
+from app.views.resr_color import ResrColor
+from app.views.token import Token
 
 
 schema_view = get_schema_view(
@@ -33,7 +35,7 @@ schema_view = get_schema_view(
 
 resources = routers.DefaultRouter()
 
-resources.register(r'color', ResourceColor)
+resources.register(r'color', ResrColor)
 
 urlpatterns = [
     path('accounts/', include('django.contrib.auth.urls')),
