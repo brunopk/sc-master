@@ -9,9 +9,9 @@ from django.contrib.auth import authenticate
 from django.utils.timezone import now
 from django.db.models import Q
 from datetime import timedelta
-from app.serializers.req_token import ReqToken
-from app.serializers.resp_error import RespError
-from app.serializers.resp_token import RespToken
+from app.serializers.req.token import ReqToken
+from app.serializers.resp.error import RespError
+from app.serializers.resp.token import RespToken
 from app.decorators import serializer
 from app.enums import Error
 from project.settings import CLIENT_ID, ACCESS_TOKEN_EXPIRE_SECONDS, TOKEN_SCOPE

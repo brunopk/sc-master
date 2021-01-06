@@ -2,7 +2,7 @@ from rest_framework.viewsets import ModelViewSet
 from rest_framework.response import Response
 from app.decorators import catch_errors
 from app.models import Color
-from app.serializers.resr_color import ResrColor as ResrColorSerializer
+from app.serializers.resr.color import ResrColor as ResrColorSerializer
 from oauth2_provider.contrib.rest_framework import TokenHasReadWriteScope
 
 

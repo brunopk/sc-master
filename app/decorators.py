@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from rest_framework.validators import ValidationError
 from django.http.response import Http404
 from logging import getLogger
-from app.serializers.resp_error import RespError
+from app.serializers.resp.error import RespError
 from app.enums import Error
 from app.scp import ApiError as ScpApiError
 

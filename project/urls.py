@@ -18,8 +18,8 @@ from django.conf.urls import url
 from rest_framework import permissions, routers
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
-from app.views.cmd_set_color import CmdSetColor
-from app.views.resr_color import ResrColor
+from app.views.cmd.set_color import CmdSetColor
+from app.views.resr.color import ResrColor
 from app.views.token import Token
 
 

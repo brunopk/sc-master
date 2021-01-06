@@ -4,9 +4,9 @@ from oauth2_provider.contrib.rest_framework import TokenHasReadWriteScope
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status
 from app.models import scp
-from app.serializers.resp_ok import RespOk
-from app.serializers.resp_error import RespError
-from app.serializers.cmd_set_color import CmdSetColor as CmdSetColorSerializer
+from app.serializers.resp.ok import RespOk
+from app.serializers.resp.error import RespError
+from app.serializers.cmd.set_color import CmdSetColor as CmdSetColorSerializer
 from app.decorators import catch_errors, serializer
 
 
@@ -29,5 +29,4 @@ class CmdSetColor(APIView):
         color = serialized_request.data.get('color')
         scp.set_color(color, section_id)
         return Response({}, status=status.HTTP_200_OK)
-
 
