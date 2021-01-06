@@ -112,4 +112,4 @@ To authenticate swagger, get the token with `curl` or Postman, copy-paste it on 
 
 - [Creation of virtual environments](https://docs.python.org/3/library/venv.html)
 - [Quickstar Django REST Framework](http://www.django-rest-framework.org/tutorial/quickstart/)
-- [Django Rest Framework » Getting started](https://django-oauth-toolkit.readthedocs.io/en/latest/rest-framework/getting_started.html)
+- [Django OAuth Toolkit](https://django-oauth-toolkit.readthedocs.io/en/latest/rest-framework/getting_started.html)
