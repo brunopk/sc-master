@@ -24,7 +24,7 @@ class CmdSetColor(APIView):
     )
     @catch_errors()
     @serializer(serializer_class=CmdSetColorSerializer)
-    def put(self, request, serialized_request):
+    def patch(self, request, serialized_request):
         section_id = serialized_request.data.get('section_id')
         color = serialized_request.data.get('color')
         scp.set_color(color, section_id)
