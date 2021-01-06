@@ -11,7 +11,7 @@ from app.scp import ApiError as ScpApiError
 
 def catch_errors():
 
-    logger = getLogger('catch_scp_errors')
+    logger = getLogger('catch_errors')
 
     def decorator(view_func):
 
