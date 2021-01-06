@@ -84,7 +84,7 @@ class ApiClient:
         :raises ApiError:
         """
         cmd = {"name": "disconnect"}
-        req = make_request(cmd)
+        req = make_request(cmd, self.end_char)
         self.send_request(req)
 
     # noinspection PyTypeChecker
@@ -108,7 +108,7 @@ class ApiClient:
             cmd['args']['end'] = end
         if color is not None:
             cmd['args']['color'] = color
-        req = make_request(cmd)
+        req = make_request(cmd, self.end_char)
         self.send_request(req)
         return self.recv_response()
 
@@ -127,7 +127,7 @@ class ApiClient:
                 'end': end,
             }
         }
-        req = make_request(cmd)
+        req = make_request(cmd, self.end_char)
         self.send_request(req)
         return self.recv_response()
 
