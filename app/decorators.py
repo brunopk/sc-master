@@ -41,24 +41,24 @@ def catch_errors():
             except ScpApiError as ex:
                 logger.warning(f'SCP error {ex.status}: {ex.message}, {str(ex.result)}')
                 error = RespError({
-                    'code': int(Error.SCDRIVER_SERVICE_ERROR),
-                    'message': str(Error.SCDRIVER_SERVICE_ERROR),
-                    'description': ex.message
+                    'code': int(Error.SCRPI_SERVICE_ERROR),
+                    'message': str(Error.SCRPI_SERVICE_ERROR),
+                    'description': f'{ex.message}: {ex.result}'
                 })
                 return Response(error.data, status=ex.status)
             except BrokenPipeError as ex:
                 logger.exception(ex)
                 error = RespError({
-                    'code': Error.SCDRIVER_UNAVAILABLE,
-                    'message': str(Error.SCDRIVER_UNAVAILABLE),
+                    'code': Error.SCRPI_CONNECTION_ERROR,
+                    'message': str(Error.SCRPI_CONNECTION_ERROR),
                     'description': 'See server logs'
                 })
                 return Response(error.data, status=status.HTTP_503_SERVICE_UNAVAILABLE)
             except ConnectionResetError as ex:
                 logger.exception(ex)
                 error = RespError({
-                    'code': Error.SCDRIVER_UNAVAILABLE,
-                    'message': str(Error.SCDRIVER_UNAVAILABLE),
+                    'code': Error.SCRPI_CONNECTION_ERROR,
+                    'message': str(Error.SCRPI_CONNECTION_ERROR),
                     'description': 'See server logs'
                 })
                 return Response(error.data, status=status.HTTP_503_SERVICE_UNAVAILABLE)
@@ -69,7 +69,7 @@ def catch_errors():
                     'message': str(Error.INTERNAL_SERVER_ERROR),
                     'description': 'See server logs'
                 })
-                return Response(error.data, status=status.HTTP_503_SERVICE_UNAVAILABLE)
+                return Response(error.data, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         return _wrapped_view_func
 
     return decorator
