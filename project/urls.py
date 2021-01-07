@@ -21,6 +21,7 @@ from drf_yasg import openapi
 from app.views.cmd.set_color import CmdSetColor
 from app.views.cmd.new_section import CmdNewSection
 from app.views.resr.color import ResrColor
+from app.views.resr.color_comb import ResrColorCombination
 from app.views.token import Token
 
 
@@ -37,6 +38,7 @@ schema_view = get_schema_view(
 resources = routers.DefaultRouter()
 
 resources.register(r'color', ResrColor)
+resources.register(r'color_combination', ResrColorCombination)
 
 urlpatterns = [
     path('accounts/', include('django.contrib.auth.urls')),
