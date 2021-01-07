@@ -23,12 +23,12 @@ def catch_errors():
         def _wrapped_view_func(self, request, *args, **kwargs):
             _status = None
             _error = None
-            _ex = None
             # self: instance of the class with the decorated method
             try:
                 return view_func(self, request, *args, **kwargs)
+            # it's raised for instance when violating model attribute unique constraint
             except IntegrityError as ex:
-                _ex = ex
+                logger.exception(ex)
                 _status = status.HTTP_409_CONFLICT
                 _error = RespError({
                     'code': int(Error.CANNOT_CREATE_ELEMENT),
@@ -36,15 +36,16 @@ def catch_errors():
                     'description': str(ex)
                 })
             except Http404 as ex:
-                _ex = ex
+                logger.exception(ex)
                 _status = status.HTTP_400_BAD_REQUEST
                 _error = RespError({
                     'code': int(Error.RESOURCE_NOT_FOUND),
                     'message': str(Error.RESOURCE_NOT_FOUND),
                     'description': str(ex)
                 })
+            # TODO diferentiate errors (for instance in [{'id': [ErrorDetail(string='section with this id already exists.', code='unique')], 'color_hex': [ErrorDetail(string='Invalid pk "string" - object does not exist.', code='does_not_exist')]}])
             except ValidationError as ex:
-                _ex = ex
+                logger.exception(ex)
                 _status = status.HTTP_400_BAD_REQUEST
                 _error = RespError({
                     'code': int(Error.BAD_REQUEST),
@@ -52,6 +53,7 @@ def catch_errors():
                     'description': str(ex)
                 })
             except ScpApiError as ex:
+                logger.exception(ex)
                 _status = ex.status
                 _error = RespError({
                     'code': int(Error.SCRPI_SERVICE_ERROR),
@@ -59,7 +61,7 @@ def catch_errors():
                     'description': f'{ex.message}: {ex.result}'
                 })
             except BrokenPipeError as ex:
-                _ex = ex
+                logger.exception(ex)
                 _status = status.HTTP_503_SERVICE_UNAVAILABLE
                 _error = RespError({
                     'code': Error.SCRPI_CONNECTION_ERROR,
@@ -67,7 +69,7 @@ def catch_errors():
                     'description': 'See server logs'
                 })
             except ConnectionResetError as ex:
-                _ex = ex
+                logger.exception(ex)
                 _status = status.HTTP_503_SERVICE_UNAVAILABLE
                 _error = RespError({
                     'code': Error.SCRPI_CONNECTION_ERROR,
@@ -75,7 +77,7 @@ def catch_errors():
                     'description': 'See server logs'
                 })
             except Exception as ex:
-                _ex = ex
+                logger.exception(ex)
                 _status = status.HTTP_500_INTERNAL_SERVER_ERROR
                 _error = RespError({
                     'code': Error.INTERNAL_SERVER_ERROR,
@@ -83,8 +85,7 @@ def catch_errors():
                     'description': 'See server logs'
                 })
             finally:
-                if _ex is not None and _status is not None and _error is not None:
-                    logger.exception(_ex)
+                if _status is not None and _error is not None:
                     return Response(_error.data, status=_status)
         return _wrapped_view_func
 
