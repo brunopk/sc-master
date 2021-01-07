@@ -1,4 +1,4 @@
-from django.db.models import Model, CASCADE, CharField, SmallIntegerField, ForeignKey
+from django.db.models import Model, CharField, SmallIntegerField, ForeignKey, CASCADE, UUIDField
 from django.contrib.auth.models import AbstractUser
 from app.scp import ApiClient
 
@@ -18,3 +18,18 @@ class Color(Model):
     red = SmallIntegerField()
     green = SmallIntegerField()
     blue = SmallIntegerField()
+
+
+class ColorCombination(Model):
+
+    class Meta:
+        db_table = 'app_color_combination'
+
+
+class Section(Model):
+
+    id = UUIDField(primary_key=True)
+    start = SmallIntegerField(null=False)
+    end = SmallIntegerField(null=False)
+    color = ForeignKey(Color, null=False, on_delete=CASCADE)
+    color_combination = ForeignKey(ColorCombination, null=True, on_delete=CASCADE)
