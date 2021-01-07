@@ -3,14 +3,14 @@ from rest_framework.response import Response
 from oauth2_provider.contrib.rest_framework import TokenHasReadWriteScope
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status
-from app.models.scp import scp
-from app.serializers.resp.error import RespError
-from app.serializers.cmd.new_section_req import CmdNewSectionReq
-from app.serializers.cmd.new_section_resp import CmdNewSectionResp
+from app.models import scp
+from app.serializers.generic.resp_ok import RespOk
+from app.serializers.generic.resp_error import RespError
+from app.serializers.commands.set_color import CmdSetColor as CmdSetColorSerializer
 from app.decorators import catch_errors, serializer
 
 
-class CmdNewSection(APIView):
+class CmdSetColor(APIView):
 
     permission_classes = [TokenHasReadWriteScope]
 
@@ -19,14 +19,14 @@ class CmdNewSection(APIView):
             status.HTTP_500_INTERNAL_SERVER_ERROR: RespError,
             status.HTTP_503_SERVICE_UNAVAILABLE: RespError(),
             status.HTTP_400_BAD_REQUEST: RespError(),
-            status.HTTP_200_OK: CmdNewSectionResp()},
-        request_body=CmdNewSectionReq,
+            status.HTTP_200_OK: RespOk()},
+        request_body=CmdSetColorSerializer,
     )
     @catch_errors()
-    @serializer(serializer_class=CmdNewSectionReq)
+    @serializer(serializer_class=CmdSetColorSerializer)
     def patch(self, _, serialized_request):
-        start = serialized_request.data.get('start')
-        end = serialized_request.data.get('end')
-        result = scp.new_section(start, end)
-        return Response({'id': result.get('id')}, status=status.HTTP_200_OK)
+        section_id = serialized_request.data.get('section_id')
+        color = serialized_request.data.get('color')
+        scp.set_color(color, section_id)
+        return Response({}, status=status.HTTP_200_OK)
 

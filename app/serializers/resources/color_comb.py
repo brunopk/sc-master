@@ -1,7 +1,7 @@
 from rest_framework.serializers import ModelSerializer, IntegerField
 from app.models.color_comb import ColorCombination
 from app.models.section import Section
-from app.serializers.resr.section import ResrSection
+from app.serializers.resources.section import ResrSection
 
 
 class ResrColorCombination(ModelSerializer):

@@ -18,10 +18,10 @@ from django.conf.urls import url
 from rest_framework import permissions, routers
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
-from app.views.cmd.set_color import CmdSetColor
-from app.views.cmd.new_section import CmdNewSection
-from app.views.resr.color import ResrColor
-from app.views.resr.color_comb import ResrColorCombination
+from app.views.commands.set_color import CmdSetColor
+from app.views.commands.new_section import CmdNewSection
+from app.views.resources.color import ResrColor
+from app.views.resources.color_comb import ResrColorCombination
 from app.views.token import Token
 
 
