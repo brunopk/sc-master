@@ -1,6 +1,5 @@
 from django.db.models import Model, SmallIntegerField, ForeignKey, CASCADE, UUIDField
-from app.models.color import Color
-from app.models.color_combination import ColorCombination
+from app.models import Color, ColorCombination
 
 
 class Section(Model):
