@@ -17,59 +17,66 @@ def catch_errors():
 
         # ser error on SCP class
 
+        # noinspection PyBroadException
         @wraps(view_func)
         def _wrapped_view_func(self, request, *args, **kwargs):
+            _status = None
+            _error = None
+            _ex = None
             # self: instance of the class with the decorated method
             try:
                 return view_func(self, request, *args, **kwargs)
             except Http404 as ex:
-                logger.info('Not found')
-                error = RespError({
+                _ex = ex
+                _status = status.HTTP_400_BAD_REQUEST
+                _error = RespError({
                     'code': int(Error.RESOURCE_NOT_FOUND),
                     'message': str(Error.RESOURCE_NOT_FOUND),
                     'description': str(ex)
                 })
-                return Response(error.data, status=status.HTTP_400_BAD_REQUEST)
             except ValidationError as ex:
-                logger.info('Bad request')
-                error = RespError({
+                _ex = ex
+                _status = status.HTTP_400_BAD_REQUEST
+                _error = RespError({
                     'code': int(Error.BAD_REQUEST),
                     'message': str(Error.BAD_REQUEST),
                     'description': str(ex)
                 })
-                return Response(error.data, status=status.HTTP_400_BAD_REQUEST)
             except ScpApiError as ex:
-                logger.warning(f'SCP error {ex.status}: {ex.message}, {str(ex.result)}')
-                error = RespError({
+                _status = ex.status
+                _error = RespError({
                     'code': int(Error.SCRPI_SERVICE_ERROR),
                     'message': str(Error.SCRPI_SERVICE_ERROR),
                     'description': f'{ex.message}: {ex.result}'
                 })
-                return Response(error.data, status=ex.status)
             except BrokenPipeError as ex:
-                logger.exception(ex)
-                error = RespError({
+                _ex = ex
+                _status = status.HTTP_503_SERVICE_UNAVAILABLE
+                _error = RespError({
                     'code': Error.SCRPI_CONNECTION_ERROR,
                     'message': str(Error.SCRPI_CONNECTION_ERROR),
                     'description': 'See server logs'
                 })
-                return Response(error.data, status=status.HTTP_503_SERVICE_UNAVAILABLE)
             except ConnectionResetError as ex:
-                logger.exception(ex)
-                error = RespError({
+                _ex = ex
+                _status = status.HTTP_503_SERVICE_UNAVAILABLE
+                _error = RespError({
                     'code': Error.SCRPI_CONNECTION_ERROR,
                     'message': str(Error.SCRPI_CONNECTION_ERROR),
                     'description': 'See server logs'
                 })
-                return Response(error.data, status=status.HTTP_503_SERVICE_UNAVAILABLE)
             except Exception as ex:
-                logger.exception(ex)
-                error = RespError({
+                _ex = ex
+                _status = status.HTTP_500_INTERNAL_SERVER_ERROR
+                _error = RespError({
                     'code': Error.INTERNAL_SERVER_ERROR,
                     'message': str(Error.INTERNAL_SERVER_ERROR),
                     'description': 'See server logs'
                 })
-                return Response(error.data, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            finally:
+                if _ex is not None and _status is not None and _error is not None:
+                    logger.exception(_ex)
+                    return Response(_error.data, status=_status)
         return _wrapped_view_func
 
     return decorator
