@@ -1,4 +1,3 @@
-import re
 import json
 import logging
 import socket as skt
@@ -150,3 +149,8 @@ class ApiClient:
         req = make_request(cmd, self.end_char)
         self.send_request(req)
         return self.recv_response()
+
+
+scp = ApiClient()
+scp.connect()
+

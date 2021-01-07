@@ -65,10 +65,11 @@ It will show the client secret and the client id, put it `CLIENT_ID` variable on
 
 ### Creating new models
 
-1. Create model class on `app/models.py`.
-2. Delete `db.sqlite3`.
-3. Create migrations: `python manage.py makemigrations`.
-4. Apply migrations on database: `python manage.py migrate`.
+1. Create a new module with the model class on `app/models/`.
+2. Import the model on `app/models/__init__.py` (for instance `from .new_model import NewModel`)
+3. Delete `db.sqlite3`.
+4. Create migrations: `python manage.py makemigrations`.
+5. Apply migrations on database: `python manage.py migrate`.
 
 To run the API again, repeat steps 6 y 7 mentioned on *Starting the API* to recreate OAuth2 configurations which are saved on database.
 

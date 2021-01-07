@@ -3,8 +3,7 @@ from rest_framework.response import Response
 from oauth2_provider.contrib.rest_framework import TokenHasReadWriteScope
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status
-from app.models import scp
-from app.serializers.resp.ok import RespOk
+from app.models.scp import scp
 from app.serializers.resp.error import RespError
 from app.serializers.cmd.new_section_req import CmdNewSectionReq
 from app.serializers.cmd.new_section_resp import CmdNewSectionResp

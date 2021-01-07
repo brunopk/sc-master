@@ -1,7 +1,7 @@
 from rest_framework.serializers import IntegerField, CharField, Serializer, ValidationError
 from re import match
 from webcolors import hex_to_rgb, rgb_to_hex
-from app.models import Color
+from app.models.color import Color
 
 
 # noinspection PyAbstractClass
@@ -46,7 +46,7 @@ class ResrColor(Serializer):
             rgb_tuple = self.validate_rgb(validated_data.get('rgb'))
             hex_value = rgb_to_hex(rgb_tuple)
 
-        return Color.objects.create(red=rgb_tuple[0], blue=rgb_tuple[1], green=rgb_tuple[2], hex=hex_value)
+        return Color.objects.create(id=hex_value, red=rgb_tuple[0], blue=rgb_tuple[1], green=rgb_tuple[2])
 
     def to_representation(self, instance):
         return {

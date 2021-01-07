@@ -6,7 +6,7 @@ from django.http.response import Http404
 from logging import getLogger
 from app.serializers.resp.error import RespError
 from app.enums import Error
-from app.scp import ApiError as ScpApiError
+from app.models.scp import ApiError as ScpApiError
 
 
 def catch_errors():
