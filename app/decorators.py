@@ -3,6 +3,7 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.validators import ValidationError
 from django.http.response import Http404
+from django.db.utils import IntegrityError
 from logging import getLogger
 from app.serializers.resp.error import RespError
 from app.enums import Error
@@ -26,6 +27,14 @@ def catch_errors():
             # self: instance of the class with the decorated method
             try:
                 return view_func(self, request, *args, **kwargs)
+            except IntegrityError as ex:
+                _ex = ex
+                _status = status.HTTP_409_CONFLICT
+                _error = RespError({
+                    'code': int(Error.CANNOT_CREATE_ELEMENT),
+                    'message': str(Error.CANNOT_CREATE_ELEMENT),
+                    'description': str(ex)
+                })
             except Http404 as ex:
                 _ex = ex
                 _status = status.HTTP_400_BAD_REQUEST

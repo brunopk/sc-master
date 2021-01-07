@@ -9,6 +9,7 @@ class Error(Enum):
     INTERNAL_SERVER_ERROR = 4
     INVALID_USER_OR_PASSWORD = 5
     RESOURCE_NOT_FOUND = 6
+    CANNOT_CREATE_ELEMENT = 7
 
     def __str__(self):
         return self.name
