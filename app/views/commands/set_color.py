@@ -6,7 +6,7 @@ from rest_framework import status
 from app.models import scp
 from app.serializers.generic.resp_ok import RespOk
 from app.serializers.generic.resp_error import RespError
-from app.serializers.commands.set_color import CmdSetColor as CmdSetColorSerializer
+from app.serializers.commands.set_color_req import CmdSetColorReq
 from app.decorators import catch_errors, serializer
 
 
@@ -20,10 +20,10 @@ class CmdSetColor(APIView):
             status.HTTP_503_SERVICE_UNAVAILABLE: RespError(),
             status.HTTP_400_BAD_REQUEST: RespError(),
             status.HTTP_200_OK: RespOk()},
-        request_body=CmdSetColorSerializer,
+        request_body=CmdSetColorReq,
     )
     @catch_errors()
-    @serializer(serializer_class=CmdSetColorSerializer)
+    @serializer(serializer_class=CmdSetColorReq)
     def patch(self, _, serialized_request):
         section_id = serialized_request.data.get('section_id')
         color = serialized_request.data.get('color')

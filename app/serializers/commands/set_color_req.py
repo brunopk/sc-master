@@ -1,7 +1,7 @@
 from rest_framework.serializers import Serializer, UUIDField, CharField
 
 
-class CmdSetColor(Serializer):
+class CmdSetColorReq(Serializer):
 
     section_id = UUIDField(required=False)
     color = CharField(required=True)
