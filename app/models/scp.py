@@ -20,8 +20,8 @@ class ApiError(Exception):
 
 class ApiClient:
     """
-    sc-driver client
-    https://github.com/brunopk/sc-driver
+    sc-rpi client
+    https://github.com/brunopk/sc-rpi
     """
 
     def send_request(self, req: str):
@@ -55,7 +55,7 @@ class ApiClient:
         msg += str(chunk.decode('utf-8'))
         resp = json.loads(msg)
         if resp['status'] != SCP_OK:
-            self.logger.warning(f'Error {resp["status"]} from sc-driver: {resp["message"]}, {resp["result"]}')
+            self.logger.warning(f'Error {resp["status"]} from sc-rpi: {resp["message"]}, {resp["result"]}')
             raise ApiError(resp['status'], resp['message'], resp['result'])
         return resp['result']
 
@@ -66,12 +66,12 @@ class ApiClient:
         self.logger = logging.getLogger(__name__)
 
     def connect(self):
-        if not settings.SC_CONNECTION_DISABLED:
+        if not settings.SCRPI_CONNECTION_DISABLED:
             self.skt = skt.socket(skt.AF_INET, skt.SOCK_STREAM)
-            self.skt.connect((settings.SC_DRIVER_HOST, settings.SC_DRIVER_PORT))
-            self.logger.warning(f'Connected with sc-driver on {settings.SC_DRIVER_HOST}:{settings.SC_DRIVER_PORT}')
+            self.skt.connect((settings.SCRPI_HOST, settings.SCRPI_PORT))
+            self.logger.warning(f'Connected with sc-rpi on {settings.SCRPI_HOST}:{settings.SCRPI_PORT}')
         else:
-            self.logger.warning('Connection to sc-driver disabled, set SC_CONNECTION_DISABLED = False on '
+            self.logger.warning('Connection to sc-rpi disabled, set SC_CONNECTION_DISABLED = False on '
                                 'project/settings.py or run django with --noreload argument.')
 
     def disconnect(self):
@@ -83,6 +83,18 @@ class ApiClient:
         :raises ApiError:
         """
         cmd = {"name": "disconnect"}
+        req = make_request(cmd, self.end_char)
+        self.send_request(req)
+
+    def reset(self):
+        """
+        Remove all sections
+
+        :raises BrokenPipeError:
+        :raises ConnectionResetError:
+        :raises ApiError:
+        """
+        cmd = {"name": "reset"}
         req = make_request(cmd, self.end_char)
         self.send_request(req)
 
@@ -98,7 +110,7 @@ class ApiClient:
         cmd = {
             'name': 'edit_section',
             'args': {
-                'id': section_id
+                'section_id': section_id
             }
         }
         if start is not None:
