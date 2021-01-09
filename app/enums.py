@@ -10,6 +10,7 @@ class Error(Enum):
     INVALID_USER_OR_PASSWORD = 5
     RESOURCE_NOT_FOUND = 6
     CANNOT_CREATE_ELEMENT = 7
+    PARSE_ERROR = 8
 
     def __str__(self):
         return self.name
