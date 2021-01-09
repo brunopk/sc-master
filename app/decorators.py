@@ -2,6 +2,7 @@ from functools import wraps
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.validators import ValidationError
+from rest_framework.exceptions import ParseError
 from django.http.response import Http404
 from django.db.utils import IntegrityError
 from logging import getLogger
@@ -33,6 +34,14 @@ def catch_errors():
                 _error = RespError({
                     'code': int(Error.CANNOT_CREATE_ELEMENT),
                     'message': str(Error.CANNOT_CREATE_ELEMENT),
+                    'description': str(ex)
+                })
+            except ParseError as ex:
+                logger.exception(ex)
+                _status = status.HTTP_400_BAD_REQUEST
+                _error = RespError({
+                    'code': int(Error.PARSE_ERROR),
+                    'message': str(Error.PARSE_ERROR),
                     'description': str(ex)
                 })
             except Http404 as ex:
