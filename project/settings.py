@@ -25,7 +25,7 @@ SECRET_KEY = 'imbv2etdjexi-tgpms_y0(%k&qp2927wnq1c7-$)c586fyht1%'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -158,6 +158,8 @@ SWAGGER_SETTINGS = {
 CORS_ORIGIN_WHITELIST = [
     "http://localhost:3000",
 ]
+
+CORS_ORIGIN_ALLOW_ALL = True
 
 
 AUTH_USER_MODEL = 'app.User'
