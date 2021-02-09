@@ -3,11 +3,13 @@ from rest_framework.response import Response
 from oauth2_provider.contrib.rest_framework import TokenHasReadWriteScope
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status
-from app.models import scp
+from app.models import scrpi_client
 from app.serializers.generic.resp_ok import RespOk
 from app.serializers.generic.resp_error import RespError
 from app.decorators import catch_errors
 
+
+# TODO: there should be a CmdTurnOn View
 
 class CmdTurnOff(APIView):
 
@@ -22,7 +24,8 @@ class CmdTurnOff(APIView):
     )
     @catch_errors()
     def patch(self, _, ):
-        scp.reset()
-        scp.set_color("#000000")
+        # TODO: fix: edited section must be saved when strip is turned off and restored strip is turned on
+        scrpi_client.reset()
+        scrpi_client.set_color("#000000")
         return Response({}, status=status.HTTP_200_OK)
 

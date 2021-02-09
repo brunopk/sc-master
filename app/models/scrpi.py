@@ -1,13 +1,20 @@
 import json
 import logging
 import socket as skt
-import project.settings as settings
 
 SCP_OK = 200
 
 
 def make_request(cmd: dict, end_char: str):
     return json.dumps(cmd) + end_char
+
+
+class BadPort(Exception):
+    pass
+
+
+class NotConnected(Exception):
+    pass
 
 
 class ApiError(Exception):
@@ -29,7 +36,11 @@ class ApiClient:
         Send request
 
         :raises BrokenPipeError:
+        :raises NotConnected:
         """
+
+        if self.skt is None:
+            raise NotConnected()
 
         msg = req.encode('utf-8')
         size = self.skt.send(msg)
@@ -65,14 +76,23 @@ class ApiClient:
         self.end_char = '\n'
         self.logger = logging.getLogger(__name__)
 
-    def connect(self):
-        if not settings.SCRPI_CONNECTION_DISABLED:
-            self.skt = skt.socket(skt.AF_INET, skt.SOCK_STREAM)
-            self.skt.connect((settings.SCRPI_HOST, settings.SCRPI_PORT))
-            self.logger.warning(f'Connected with sc-rpi on {settings.SCRPI_HOST}:{settings.SCRPI_PORT}')
-        else:
-            self.logger.warning('Connection to sc-rpi disabled, set SC_CONNECTION_DISABLED = False on '
-                                'project/settings.py or run django with --noreload argument.')
+    def connect(self, address: str, port: int):
+        """
+        Connect to sc-rpi
+
+        :param address: address (IP or hostname)
+        :param port: port number
+        :raises OSError:
+        """
+        self.skt = skt.socket(skt.AF_INET, skt.SOCK_STREAM)
+        try:
+            self.skt.connect((address, port))
+        except ConnectionRefusedError as ex:
+            raise ex
+        except OSError:
+            raise BadPort()
+        except Exception as ex:
+            raise ex
 
     def disconnect(self):
         """
@@ -80,6 +100,7 @@ class ApiClient:
 
         :raises BrokenPipeError:
         :raises ConnectionResetError:
+        :raises NotConnected:
         :raises ApiError:
         """
         cmd = {"name": "disconnect"}
@@ -92,6 +113,7 @@ class ApiClient:
 
         :raises BrokenPipeError:
         :raises ConnectionResetError:
+        :raises NotConnected:
         :raises ApiError:
         """
         cmd = {"name": "reset"}
@@ -105,6 +127,7 @@ class ApiClient:
 
         :raises BrokenPipeError:
         :raises ConnectionResetError:
+        :raises NotConnected:
         :raises ApiError:
         """
         cmd = {
@@ -129,6 +152,7 @@ class ApiClient:
 
         :raises BrokenPipeError:
         :raises ConnectionResetError:
+        :raises NotConnected:
         :raises ApiError:
         """
         cmd = {
@@ -148,6 +172,7 @@ class ApiClient:
 
         :raises BrokenPipeError:
         :raises ConnectionResetError:
+        :raises NotConnected:
         :raises ApiError:
         """
         cmd = {
@@ -163,6 +188,5 @@ class ApiClient:
         return self.recv_response()
 
 
-scp = ApiClient()
-scp.connect()
+scrpi_client = ApiClient()
 

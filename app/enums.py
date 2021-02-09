@@ -11,6 +11,9 @@ class Error(Enum):
     RESOURCE_NOT_FOUND = 6
     CANNOT_CREATE_ELEMENT = 7
     PARSE_ERROR = 8
+    SCRPI_BAD_PORT = 9
+    SCRPI_CONNECTION_REFUSED = 10
+    SCRPI_NOT_CONNECTED = 11
 
     def __str__(self):
         return self.name

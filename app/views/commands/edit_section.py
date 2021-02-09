@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from oauth2_provider.contrib.rest_framework import TokenHasReadWriteScope
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status
-from app.models.scp import scp
+from app.models import scrpi_client
 from app.serializers.generic.resp_error import RespError
 from app.serializers.generic.resp_ok import RespOk
 from app.serializers.commands.edit_section_req import CmdEditSectionReq
@@ -31,6 +31,6 @@ class CmdEditSection(APIView):
         start = serialized_request.data.get('start')
         end = serialized_request.data.get('end')
         color = serialized_request.data.get('color')
-        scp.edit_section(id, start=start, end=end, color=color)
+        scrpi_client.edit_section(id, start=start, end=end, color=color)
         return Response({}, status=status.HTTP_200_OK)
 

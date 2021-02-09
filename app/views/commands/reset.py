@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from oauth2_provider.contrib.rest_framework import TokenHasReadWriteScope
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status
-from app.models import scp
+from app.models import scrpi_client
 from app.serializers.generic.resp_ok import RespOk
 from app.serializers.generic.resp_error import RespError
 from app.decorators import catch_errors
@@ -22,6 +22,6 @@ class CmdReset(APIView):
     )
     @catch_errors()
     def patch(self, _):
-        scp.reset()
+        scrpi_client.reset()
         return Response({}, status=status.HTTP_200_OK)
 

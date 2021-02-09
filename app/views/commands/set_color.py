@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from oauth2_provider.contrib.rest_framework import TokenHasReadWriteScope
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status
-from app.models import scp
+from app.models import scrpi_client
 from app.serializers.generic.resp_ok import RespOk
 from app.serializers.generic.resp_error import RespError
 from app.serializers.commands.set_color_req import CmdSetColorReq
@@ -28,6 +28,6 @@ class CmdSetColor(APIView):
     def patch(self, _, serialized_request):
         section_id = serialized_request.data.get('section_id')
         color = serialized_request.data.get('color')
-        scp.set_color(color, section_id)
+        scrpi_client.set_color(color, section_id)
         return Response({}, status=status.HTTP_200_OK)
 

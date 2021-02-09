@@ -8,7 +8,7 @@ from django.db.utils import IntegrityError
 from logging import getLogger
 from app.serializers.generic.resp_error import RespError
 from app.enums import Error
-from app.models.scp import ApiError as ScpApiError
+from app.models import ApiError as ScRpiError, BadPort, NotConnected
 
 
 def catch_errors():
@@ -27,7 +27,7 @@ def catch_errors():
             # self: instance of the class with the decorated method
             try:
                 return view_func(self, request, *args, **kwargs)
-            # it's raised for instance when violating model attribute unique constraint
+            # for instance when violating model attribute unique constraint
             except IntegrityError as ex:
                 logger.exception(ex)
                 _status = status.HTTP_409_CONFLICT
@@ -61,13 +61,39 @@ def catch_errors():
                     'message': str(Error.BAD_REQUEST),
                     'description': str(ex)
                 })
-            except ScpApiError as ex:
+            except ScRpiError as ex:
                 logger.exception(ex)
                 _status = ex.status
                 _error = RespError({
                     'code': int(Error.SCRPI_SERVICE_ERROR),
                     'message': str(Error.SCRPI_SERVICE_ERROR),
                     'description': f'{ex.message}: {ex.result}'
+                })
+            # when connecting to sc-rpi
+            except BadPort as ex:
+                logger.exception(ex)
+                _status = status.HTTP_400_BAD_REQUEST
+                _error = RespError({
+                    'code': Error.SCRPI_BAD_PORT,
+                    'message': str(Error.SCRPI_BAD_PORT),
+                    'description': 'Operating system do not allow port.'
+                })
+            except NotConnected as ex:
+                logger.exception(ex)
+                _status = status.HTTP_503_SERVICE_UNAVAILABLE
+                _error = RespError({
+                    'code': Error.SCRPI_NOT_CONNECTED,
+                    'message': str(Error.SCRPI_NOT_CONNECTED),
+                    'description': 'Connect to sc-rpi using /connect_scrpi endpoint.'
+                })
+            # when connecting to sc-rpi
+            except ConnectionRefusedError as ex:
+                logger.exception(ex)
+                _status = status.HTTP_404_NOT_FOUND
+                _error = RespError({
+                    'code': Error.SCRPI_CONNECTION_REFUSED,
+                    'message': str(Error.SCRPI_CONNECTION_REFUSED),
+                    'description': 'Cannot found a running instance of sc-rpi in the requested address and port.'
                 })
             except BrokenPipeError as ex:
                 logger.exception(ex)
@@ -99,6 +125,8 @@ def catch_errors():
         return _wrapped_view_func
 
     return decorator
+
+# TODO: Rename to validate_request
 
 
 def serializer(serializer_class):
