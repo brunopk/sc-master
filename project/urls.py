@@ -24,6 +24,7 @@ from app.views.commands.edit_section import CmdEditSection
 from app.views.commands.turn_off import CmdTurnOff
 from app.views.commands.reset import CmdReset
 from app.views.commands.scrpi_connect import CmdScRpiConnect
+from app.views.commands.scrpi_status import CmdScRpiStatus
 from app.views.resources.color import ResrColor
 from app.views.resources.color_comb import ResrColorCombination
 from app.views.token import Token
@@ -56,6 +57,7 @@ urlpatterns = [
     url(r'^commands/new_section$', CmdNewSection.as_view()),
     url(r'^commands/edit_section$', CmdEditSection.as_view()),
     url(r'^commands/scrpi/connect$', CmdScRpiConnect.as_view()),
+    url(r'^commands/scrpi/status$', CmdScRpiStatus.as_view()),
     url(r'^resources/', include(resources.urls)),
     url(r'^swagger(?P<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=0), name='schema-json'),
     url(r'^swagger/$', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
