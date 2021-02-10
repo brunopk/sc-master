@@ -8,7 +8,7 @@ from django.db.utils import IntegrityError
 from logging import getLogger
 from app.serializers.generic.resp_error import RespError
 from app.enums import Error
-from app.models import ApiError as ScRpiError, BadPort, NotConnected
+from app.models import ApiError as ScRpiError, BadPort, BadAddress, NotConnected
 
 
 def catch_errors():
@@ -68,6 +68,15 @@ def catch_errors():
                     'code': int(Error.SCRPI_SERVICE_ERROR),
                     'message': str(Error.SCRPI_SERVICE_ERROR),
                     'description': f'{ex.message}: {ex.result}'
+                })
+            # when connecting to sc-rpi
+            except BadAddress as ex:
+                logger.exception(ex)
+                _status = status.HTTP_400_BAD_REQUEST
+                _error = RespError({
+                    'code': Error.SCRPI_BAD_ADDRESS,
+                    'message': str(Error.SCRPI_BAD_ADDRESS),
+                    'description': 'Operating system do not allow address.'
                 })
             # when connecting to sc-rpi
             except BadPort as ex:

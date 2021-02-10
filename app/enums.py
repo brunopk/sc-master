@@ -14,6 +14,7 @@ class Error(Enum):
     SCRPI_BAD_PORT = 9
     SCRPI_CONNECTION_REFUSED = 10
     SCRPI_NOT_CONNECTED = 11
+    SCRPI_BAD_ADDRESS = 12
 
     def __str__(self):
         return self.name

@@ -9,6 +9,10 @@ def make_request(cmd: dict, end_char: str):
     return json.dumps(cmd) + end_char
 
 
+class BadAddress(Exception):
+    pass
+
+
 class BadPort(Exception):
     pass
 
@@ -82,13 +86,16 @@ class ApiClient:
 
         :param address: address (IP or hostname)
         :param port: port number
-        :raises OSError:
+        :raises BadPort:
+        :raises BadAddress:
         """
         self.skt = skt.socket(skt.AF_INET, skt.SOCK_STREAM)
         try:
             self.skt.connect((address, port))
         except ConnectionRefusedError as ex:
             raise ex
+        except skt.gaierror:
+            raise BadAddress()
         except OSError:
             raise BadPort()
         except Exception as ex:
