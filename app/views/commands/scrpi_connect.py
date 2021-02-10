@@ -10,6 +10,9 @@ from app.serializers.generic.resp_error import RespError
 from app.decorators import catch_errors, serializer
 
 
+# TODO: avoid multiple connections to sc-rpi
+# TODO: get led_number with scrpi_client (same response fields as scrpi_status)
+
 class CmdScRpiConnect(APIView):
 
     permission_classes = [TokenHasReadWriteScope]
@@ -27,6 +30,5 @@ class CmdScRpiConnect(APIView):
     @serializer(serializer_class=CmdScRpiConnectReq)
     def patch(self, _, serialized_request):
         scrpi_client.connect(serialized_request.data.get('address'), serialized_request.data.get('port'))
-        # TODO: get led_number with scrpi_client (same response fields as scrpi_status)
         return Response({'led_number': 300}, status=status.HTTP_200_OK)
 
