@@ -1,7 +1,7 @@
 from rest_framework.serializers import Serializer, IntegerField
 
 
-class CmdConnectScRpiResp(Serializer):
+class CmdScRpiConnectResp(Serializer):
 
     led_number = IntegerField(required=True)
 

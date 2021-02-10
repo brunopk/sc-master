@@ -1,7 +1,7 @@
 from rest_framework.serializers import Serializer, CharField, IntegerField
 
 
-class CmdConnectScRpiReq(Serializer):
+class CmdScRpiConnectReq(Serializer):
 
     address = CharField(required=True)
     port = IntegerField(required=True)
