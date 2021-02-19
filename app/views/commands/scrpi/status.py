@@ -4,7 +4,7 @@ from oauth2_provider.contrib.rest_framework import TokenHasReadWriteScope
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status
 from app.models import scrpi_client
-from app.serializers.commands.scrpi_status_resp import CmdScRpiStatusResp
+from app.serializers.commands.scrpi.status_resp import CmdScRpiStatusResp
 from app.serializers.generic.resp_error import RespError
 from app.models import ApiError as ScRpiError, NotConnected
 from app.decorators import catch_errors

@@ -19,16 +19,20 @@ from rest_framework import permissions, routers
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 from app.views.commands.set_color import CmdSetColor
-from app.views.commands.new_section import CmdNewSection
-from app.views.commands.edit_section import CmdEditSection
+from app.views.commands.sections.new import CmdNewSection
+from app.views.commands.sections.edit import CmdEditSection
 from app.views.commands.turn_off import CmdTurnOff
 from app.views.commands.reset import CmdReset
-from app.views.commands.scrpi_connect import CmdScRpiConnect
-from app.views.commands.scrpi_status import CmdScRpiStatus
+from app.views.commands.scrpi.connect import CmdScRpiConnect
+from app.views.commands.scrpi.status import CmdScRpiStatus
 from app.views.resources.color import ResrColor
 from app.views.resources.color_comb import ResrColorCombination
 from app.views.token import Token
 
+# TODO add command /commands/sections/merge (adds a static_design )
+# TODO add resource endpoint /static_design (replace color_combination)
+# TODO fix multiple login with the same user (and not-expired token)
+# TODO use int id for static_design instead of uuid from sc-rpi
 
 schema_view = get_schema_view(
    openapi.Info(
@@ -54,8 +58,8 @@ urlpatterns = [
     url(r'^commands/turn_off$', CmdTurnOff.as_view()),
     url(r'^commands/reset$', CmdReset.as_view()),
     url(r'^commands/set_color$', CmdSetColor.as_view()),
-    url(r'^commands/new_section$', CmdNewSection.as_view()),
-    url(r'^commands/edit_section$', CmdEditSection.as_view()),
+    url(r'^commands/sections/new$', CmdNewSection.as_view()),
+    url(r'^commands/sections/edit$', CmdEditSection.as_view()),
     url(r'^commands/scrpi/connect$', CmdScRpiConnect.as_view()),
     url(r'^commands/scrpi/status$', CmdScRpiStatus.as_view()),
     url(r'^resources/', include(resources.urls)),

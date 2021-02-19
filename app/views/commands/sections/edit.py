@@ -5,29 +5,32 @@ from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status
 from app.models import scrpi_client
 from app.serializers.generic.resp_error import RespError
-from app.serializers.commands.new_section_req import CmdNewSectionReq
-from app.serializers.commands.new_section_resp import CmdNewSectionResp
+from app.serializers.generic.resp_ok import RespOk
+from app.serializers.commands.sections.edit_req import CmdEditSectionReq
 from app.decorators import catch_errors, serializer
 
 
-class CmdNewSection(APIView):
+class CmdEditSection(APIView):
 
     permission_classes = [TokenHasReadWriteScope]
 
+    # noinspection PyShadowingBuiltins
     @swagger_auto_schema(
         responses={
             status.HTTP_500_INTERNAL_SERVER_ERROR: RespError,
             status.HTTP_503_SERVICE_UNAVAILABLE: RespError(),
             status.HTTP_409_CONFLICT: RespError(),
             status.HTTP_400_BAD_REQUEST: RespError(),
-            status.HTTP_200_OK: CmdNewSectionResp()},
-        request_body=CmdNewSectionReq,
+            status.HTTP_200_OK: RespOk},
+        request_body=CmdEditSectionReq,
     )
     @catch_errors()
-    @serializer(serializer_class=CmdNewSectionReq)
+    @serializer(serializer_class=CmdEditSectionReq)
     def patch(self, _, serialized_request):
+        id = serialized_request.data.get('section_id')
         start = serialized_request.data.get('start')
         end = serialized_request.data.get('end')
-        result = scrpi_client.new_section(start, end)
-        return Response({'id': result.get('id')}, status=status.HTTP_200_OK)
+        color = serialized_request.data.get('color')
+        scrpi_client.edit_section(id, start=start, end=end, color=color)
+        return Response({}, status=status.HTTP_200_OK)
 
