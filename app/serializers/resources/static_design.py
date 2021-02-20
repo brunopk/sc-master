@@ -4,7 +4,7 @@ from app.models.section import Section
 from app.serializers.resources.section import ResrSection
 
 
-class ResrColorCombination(ModelSerializer):
+class ResrStaticDesign(ModelSerializer):
 
     id = IntegerField(read_only=True)
     section_set = ResrSection(many=True)

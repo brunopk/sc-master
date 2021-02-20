@@ -26,7 +26,7 @@ from app.views.commands.reset import CmdReset
 from app.views.commands.scrpi.connect import CmdScRpiConnect
 from app.views.commands.scrpi.status import CmdScRpiStatus
 from app.views.resources.color import ResrColor
-from app.views.resources.color_comb import ResrColorCombination
+from app.views.resources.static_design import ResrStaticDesign
 from app.views.token import Token
 
 # TODO add command /commands/sections/merge (adds a static_design )
@@ -46,7 +46,7 @@ schema_view = get_schema_view(
 resources = routers.DefaultRouter()
 
 resources.register(r'color', ResrColor)
-resources.register(r'color_combination', ResrColorCombination)
+resources.register(r'static_design', ResrStaticDesign)
 
 urlpatterns = [
     path('accounts/', include('django.contrib.auth.urls')),
