@@ -30,7 +30,6 @@ from app.views.resources.static_design import ResrStaticDesign
 from app.views.token import Token
 
 # TODO add command /commands/sections/merge (adds a static_design )
-# TODO add resource endpoint /static_design (replace color_combination)
 # TODO fix multiple login with the same user (and not-expired token)
 
 schema_view = get_schema_view(
