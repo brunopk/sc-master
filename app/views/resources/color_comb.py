@@ -2,7 +2,7 @@ from rest_framework.viewsets import ModelViewSet
 from rest_framework import status
 from rest_framework.serializers import ListSerializer
 from app.decorators import catch_errors
-from app.models import ColorCombination
+from app.models import StaticDesign
 from app.serializers.resources.color_comb import ResrColorCombination as ResrColorCombinationSerializer
 from app.serializers.generic.resp_error import RespError
 from app.serializers.generic.resp_ok import RespOk
@@ -12,7 +12,7 @@ from drf_yasg.utils import swagger_auto_schema
 
 class ResrColorCombination(ModelViewSet):
     serializer_class = ResrColorCombinationSerializer
-    queryset = ColorCombination.objects.all()
+    queryset = StaticDesign.objects.all()
     permission_classes = [TokenHasReadWriteScope]
     http_method_names = ['post', 'get', 'delete']
 

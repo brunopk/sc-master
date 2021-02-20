@@ -6,7 +6,7 @@ class ResrSection(ModelSerializer):
 
     class Meta:
         model = Section
-        exclude = ['color_combination']
+        exclude = ['static_design']
 
     def validate(self, attrs):
         start = attrs.get('start')
