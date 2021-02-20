@@ -32,7 +32,6 @@ from app.views.token import Token
 # TODO add command /commands/sections/merge (adds a static_design )
 # TODO add resource endpoint /static_design (replace color_combination)
 # TODO fix multiple login with the same user (and not-expired token)
-# TODO use int id for static_design instead of uuid from sc-rpi
 
 schema_view = get_schema_view(
    openapi.Info(
