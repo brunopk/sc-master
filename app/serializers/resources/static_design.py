@@ -11,7 +11,7 @@ class ResrStaticDesign(ModelSerializer):
 
     class Meta:
         model = StaticDesign
-        fields = '__all__'
+        exclude = ['active']
 
     def create(self, validated_data):
         section_set = validated_data.pop('section_set')
