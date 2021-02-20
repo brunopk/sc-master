@@ -15,9 +15,9 @@ class ResrColorCombination(ModelSerializer):
 
     def create(self, validated_data):
         section_set = validated_data.pop('section_set')
-        color_combination = StaticDesign.objects.create(**validated_data)
+        static_design = StaticDesign.objects.create(**validated_data)
         for section in section_set:
-            Section.objects.create(color_combination=color_combination, **section)
-        return color_combination
+            Section.objects.create(static_design=static_design, **section)
+        return static_design
 
 
