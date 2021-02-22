@@ -15,6 +15,8 @@ class Error(Enum):
     SCRPI_CONNECTION_REFUSED = 10
     SCRPI_NOT_CONNECTED = 11
     SCRPI_BAD_ADDRESS = 12
+    SECTION_OVERLAPPING = 13
+    COLOR_NOT_DEFINED = 14
 
     def __str__(self):
         return self.name

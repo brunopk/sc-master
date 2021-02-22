@@ -21,6 +21,7 @@ from drf_yasg import openapi
 from app.views.commands.set_color import CmdSetColor
 from app.views.commands.sections.new import CmdNewSection
 from app.views.commands.sections.edit import CmdEditSection
+from app.views.commands.sections.merge import CmdMergeSection
 from app.views.commands.turn_off import CmdTurnOff
 from app.views.commands.reset import CmdReset
 from app.views.commands.scrpi.connect import CmdScRpiConnect
@@ -30,6 +31,8 @@ from app.views.resources.static_design import ResrStaticDesign
 from app.views.token import Token
 
 # TODO add command /commands/sections/merge (adds a static_design )
+# TODO change /commands/sections/edit to turn on of a section
+# TODO remove /commands/sections/new
 # TODO fix multiple login with the same user (and not-expired token)
 
 schema_view = get_schema_view(
@@ -58,6 +61,7 @@ urlpatterns = [
     url(r'^commands/set_color$', CmdSetColor.as_view()),
     url(r'^commands/sections/new$', CmdNewSection.as_view()),
     url(r'^commands/sections/edit$', CmdEditSection.as_view()),
+    url(r'^commands/sections/merge$', CmdMergeSection.as_view()),
     url(r'^commands/scrpi/connect$', CmdScRpiConnect.as_view()),
     url(r'^commands/scrpi/status$', CmdScRpiStatus.as_view()),
     url(r'^resources/', include(resources.urls)),
