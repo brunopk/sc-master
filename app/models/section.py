@@ -2,6 +2,9 @@ from django.db.models import Model, SmallIntegerField, ForeignKey, CASCADE, UUID
 from app.models import Color, StaticDesign
 
 
+# TODO: add field 'is_on' boolean
+# TODO: change 'name='color_hex'
+
 class Section(Model):
 
     start = SmallIntegerField(null=False)
