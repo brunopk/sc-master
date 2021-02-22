@@ -4,7 +4,6 @@ from oauth2_provider.contrib.rest_framework import TokenHasReadWriteScope
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status
 from app.serializers.generic.resp_error import RespError
-from app.serializers.generic.resp_ok import RespOk
 from app.serializers.commands.sections.merge_resp import CmdMergeSectionResp
 from app.serializers.commands.sections.merge_req import CmdMergeSectionReq
 from app.serializers.commands.sections.section_resp import SectionResp
@@ -62,7 +61,7 @@ class CmdMergeSection(APIView):
     def patch(self, _, serialized_request):
 
         new_static_design_created = False
-        
+
         try:
             static_design = StaticDesign.objects.get(active=True)
         except StaticDesign.DoesNotExist:
