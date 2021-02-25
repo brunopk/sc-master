@@ -1,10 +1,10 @@
 from rest_framework.serializers import Serializer
-from app.serializers.commands.sections.section_req import SectionReq
+from app.serializers.commands.sections.section_resp import SectionResp
 
 
-class CmdMergeSectionReq(Serializer):
+class CmdAddSectionResp(Serializer):
 
-    sections = SectionReq(many=True)
+    sections = SectionResp(many=True)
 
     def update(self, instance, validated_data):
         pass

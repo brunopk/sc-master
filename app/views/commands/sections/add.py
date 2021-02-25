@@ -4,12 +4,14 @@ from oauth2_provider.contrib.rest_framework import TokenHasReadWriteScope
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status
 from app.serializers.generic.resp_error import RespError
-from app.serializers.commands.sections.merge_resp import CmdMergeSectionResp
-from app.serializers.commands.sections.merge_req import CmdMergeSectionReq
+from app.serializers.commands.sections.add_resp import CmdAddSectionResp
+from app.serializers.commands.sections.add_req import CmdAddSectionReq
 from app.serializers.commands.sections.section_resp import SectionResp
 from app.decorators import catch_errors, serializer
 from app.models import StaticDesign, Section, Color, scrpi_client
 from app.enums import Error
+
+# TODO: try combining CmdAddSectionResp and CmdAddSectionReq in one
 
 
 # noinspection PyShadowingBuiltins
@@ -41,7 +43,7 @@ class Overlapping(Exception):
     pass
 
 
-class CmdMergeSection(APIView):
+class CmdAddSection(APIView):
 
     permission_classes = [TokenHasReadWriteScope]
 
@@ -53,11 +55,11 @@ class CmdMergeSection(APIView):
             status.HTTP_409_CONFLICT: RespError(),
             status.HTTP_400_BAD_REQUEST: RespError(),
             status.HTTP_404_NOT_FOUND: RespError(),
-            status.HTTP_200_OK: CmdMergeSectionResp},
-        request_body=CmdMergeSectionReq,
+            status.HTTP_200_OK: CmdAddSectionResp},
+        request_body=CmdAddSectionReq,
     )
     @catch_errors()
-    @serializer(serializer_class=CmdMergeSectionReq)
+    @serializer(serializer_class=CmdAddSectionReq)
     def patch(self, _, serialized_request):
 
         new_static_design_created = False
@@ -100,7 +102,7 @@ class CmdMergeSection(APIView):
                     })
                     x.is_valid(raise_exception=True)
                     result_sections.append(x.data)
-                result = CmdMergeSectionResp(data={'sections': result_sections})
+                result = CmdAddSectionResp(data={'sections': result_sections})
                 result.is_valid(raise_exception=True)
             except Exception:
                 raise Exception()
