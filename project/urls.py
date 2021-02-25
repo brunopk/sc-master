@@ -19,7 +19,6 @@ from rest_framework import permissions, routers
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 from app.views.commands.set_color import CmdSetColor
-from app.views.commands.sections.new import CmdNewSection
 from app.views.commands.sections.edit import CmdEditSection
 from app.views.commands.sections.add import CmdAddSection
 from app.views.commands.turn_off import CmdTurnOff
@@ -31,7 +30,6 @@ from app.views.resources.static_design import ResrStaticDesign
 from app.views.token import Token
 
 # TODO change /commands/sections/edit to turn on of a section
-# TODO remove /commands/sections/new
 # TODO fix multiple login with the same user (and not-expired token)
 
 schema_view = get_schema_view(
@@ -58,7 +56,6 @@ urlpatterns = [
     url(r'^commands/turn_off$', CmdTurnOff.as_view()),
     url(r'^commands/reset$', CmdReset.as_view()),
     url(r'^commands/set_color$', CmdSetColor.as_view()),
-    url(r'^commands/sections/new$', CmdNewSection.as_view()),
     url(r'^commands/sections/edit$', CmdEditSection.as_view()),
     url(r'^commands/sections/add$', CmdAddSection.as_view()),
     url(r'^commands/scrpi/connect$', CmdScRpiConnect.as_view()),
