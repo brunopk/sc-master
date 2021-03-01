@@ -5,10 +5,13 @@ from rest_framework.validators import ValidationError
 from rest_framework.exceptions import ParseError
 from django.http.response import Http404
 from django.db.utils import IntegrityError
+from django.db.models import ObjectDoesNotExist
 from logging import getLogger
 from app.serializers.generic.resp_error import RespError
 from app.enums import Error
 from app.models import ApiError as ScRpiError, BadPort, BadAddress, NotConnected
+
+# TODO: use serialized_request as kwarg (like pk etc)
 
 
 def catch_errors():
@@ -47,6 +50,14 @@ def catch_errors():
             except Http404 as ex:
                 logger.exception(ex)
                 _status = status.HTTP_400_BAD_REQUEST
+                _error = RespError({
+                    'code': int(Error.RESOURCE_NOT_FOUND),
+                    'message': str(Error.RESOURCE_NOT_FOUND),
+                    'description': str(ex)
+                })
+            except ObjectDoesNotExist as ex:
+                logger.exception(ex)
+                _status = status.HTTP_404_NOT_FOUND
                 _error = RespError({
                     'code': int(Error.RESOURCE_NOT_FOUND),
                     'message': str(Error.RESOURCE_NOT_FOUND),
