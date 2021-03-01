@@ -5,7 +5,7 @@ class SectionReq(Serializer):
 
     start = IntegerField(required=True)
     end = IntegerField(required=True)
-    color = CharField(required=False, max_length=6)
+    color = IntegerField(required=True)
 
     def validate(self, attrs):
         start = attrs.get('start')

@@ -78,12 +78,11 @@ class CmdAddSection(APIView):
         try:
             # raise exception if detects overlapping
             merge_sort(l1 + l2)
-            aux = [(x.get('start'), x.get('end'), Color.objects.filter(hex=x.get('color'))[0]) for x in new_sections]
+            aux = [(x.get('start'), x.get('end'), Color.objects.get(pk=x.get('color'))) for x in new_sections]
             new_sections = []
-            # TODO: set attribute is_on for Section
             i = 0
             for x in aux:
-                x = Section(start=x[0], end=x[1], color_hex=x[2])
+                x = Section(start=x[0], end=x[1], color=x[2], static_design=static_design)
                 sc_rpi_result = scrpi_client.new_section(x.start, x.end)
                 sc_rpi_id = sc_rpi_result.get('id')
                 scrpi_client.set_color(x.color.hex, sc_rpi_id)
@@ -93,12 +92,11 @@ class CmdAddSection(APIView):
             try:
                 result_sections = []
                 for x in new_sections:
-                    print(x.id)
                     x = SectionResp(data={
                         'id': x.id,
                         'start': x.start,
                         'end': x.end,
-                        'color': x.color_hex_id
+                        'color': x.color.id
                     })
                     x.is_valid(raise_exception=True)
                     result_sections.append(x.data)
@@ -116,20 +114,11 @@ class CmdAddSection(APIView):
                 'description': str(Error.SECTION_OVERLAPPING)
             })
             return Response(error.data, status=status.HTTP_409_CONFLICT)
-
-        except IndexError:
-            if new_static_design_created:
-                static_design.delete()
-            error = RespError({
-                'code': Error.COLOR_NOT_DEFINED,
-                'message': str(Error.COLOR_NOT_DEFINED),
-                'description': str(Error.COLOR_NOT_DEFINED)
-            })
-            return Response(error.data, status=status.HTTP_404_NOT_FOUND)
         except Exception as ex:
             # should be better with an automatic rollback (google drf transactions)
             for x in new_sections:
-                x.delete()
+                if isinstance(x, Section):
+                    x.delete()
             if new_static_design_created:
                 static_design.delete()
             raise ex

@@ -21,6 +21,7 @@ from drf_yasg import openapi
 from app.views.commands.set_color import CmdSetColor
 from app.views.commands.sections.edit import CmdEditSection
 from app.views.commands.sections.add import CmdAddSection
+from app.views.commands.sections.turn_on import CmdTurnOnSection
 from app.views.commands.turn_off import CmdTurnOff
 from app.views.commands.reset import CmdReset
 from app.views.commands.scrpi.connect import CmdScRpiConnect
@@ -31,6 +32,7 @@ from app.views.token import Token
 
 # TODO change /commands/sections/edit to turn on of a section
 # TODO fix multiple login with the same user (and not-expired token)
+# TODO change /commands/sections/edit_section to /commands/section/{id}/edit
 
 schema_view = get_schema_view(
    openapi.Info(
@@ -58,6 +60,7 @@ urlpatterns = [
     url(r'^commands/set_color$', CmdSetColor.as_view()),
     url(r'^commands/sections/edit$', CmdEditSection.as_view()),
     url(r'^commands/sections/add$', CmdAddSection.as_view()),
+    url(r'^commands/sections/(?P<pk>\d+)/turn_on$', CmdTurnOnSection.as_view()),
     url(r'^commands/scrpi/connect$', CmdScRpiConnect.as_view()),
     url(r'^commands/scrpi/status$', CmdScRpiStatus.as_view()),
     url(r'^resources/', include(resources.urls)),
