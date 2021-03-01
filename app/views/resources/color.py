@@ -14,7 +14,7 @@ from drf_yasg.utils import swagger_auto_schema
 class ResrColor(ModelViewSet):
     serializer_class = ResrColorSerializer
     queryset = Color.objects.all()
-    lookup_field = 'hex'
+    lookup_field = 'id'
     permission_classes = [TokenHasReadWriteScope]
     http_method_names = ['post', 'get', 'delete']
 

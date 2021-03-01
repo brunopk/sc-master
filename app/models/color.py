@@ -1,10 +1,11 @@
 from django.db.models import Model, CharField, SmallIntegerField
 
+# TODO: associate color to users
+
 
 class Color(Model):
 
-    # Hexadecimal value
-    hex = CharField(primary_key=True, max_length=6)
+    hex = CharField(max_length=6)
     red = SmallIntegerField()
     green = SmallIntegerField()
     blue = SmallIntegerField()

@@ -7,6 +7,7 @@ from app.models.color import Color
 # noinspection PyAbstractClass
 class ResrColor(Serializer):
 
+    id = CharField(read_only=True)
     rgb = CharField(required=False)
     hex = CharField(required=False)
 
@@ -51,6 +52,7 @@ class ResrColor(Serializer):
 
     def to_representation(self, instance):
         return {
+            'id': instance.id,
             'hex': instance.hex,
             'rgb': f'rgb({instance.red}, {instance.green}, {instance.blue})',
         }
