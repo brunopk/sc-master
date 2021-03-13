@@ -1,8 +1,7 @@
 from django.db.models import Model, CharField, BooleanField
 
-
-# TODO: delete all StaticDesign (active = True) on /commands/reset
 # TODO: delete all StaticDesign (active = True) after the FIRST user gets logged in (on /token)
+
 
 class StaticDesign(Model):
 
