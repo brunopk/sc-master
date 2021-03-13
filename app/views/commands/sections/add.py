@@ -84,9 +84,9 @@ class CmdAddSection(APIView):
             for x in aux:
                 x = Section(start=x[0], end=x[1], color=x[2], static_design=static_design)
                 sc_rpi_result = scrpi_client.new_section(x.start, x.end)
-                sc_rpi_id = sc_rpi_result.get('id')
-                scrpi_client.set_color(x.color.hex, sc_rpi_id)
-                x.sc_rpi_id = sc_rpi_id
+                hw_id = sc_rpi_result.get('id')
+                scrpi_client.set_color(x.color.hex, hw_id)
+                x.hw_id = hw_id
                 x.save()
                 new_sections.append(x)
             try:

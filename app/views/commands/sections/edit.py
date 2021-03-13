@@ -40,7 +40,7 @@ class CmdEditSection(APIView):
                 resp.is_valid(raise_exception=True)
                 return Response(resp.data, status=status.HTTP_400_BAD_REQUEST)
             else:
-                hw_section_id = section.sc_rpi_id
+                hw_section_id = section.hw_id
                 start = serialized_request.data.get('start')
                 end = serialized_request.data.get('end')
                 color = serialized_request.data.get('color')

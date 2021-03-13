@@ -8,6 +8,7 @@ class StaticDesign(Model):
 
     name = CharField(null=True, max_length=256)
     active = BooleanField(null=False, default=False)
+    is_on = BooleanField(null=False, default=True)
 
     class Meta:
         db_table = 'app_static_design'

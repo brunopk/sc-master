@@ -6,7 +6,7 @@ class Section(Model):
 
     start = SmallIntegerField(null=False)
     end = SmallIntegerField(null=False)
-    sc_rpi_id = UUIDField(null=True)
+    hw_id = UUIDField(null=True)
     name = CharField(null=True, max_length=256)
     is_on = BooleanField(null=False, default=True)
     color = ForeignKey(Color, null=False, on_delete=CASCADE, related_name='color')

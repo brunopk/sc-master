@@ -38,7 +38,7 @@ class CmdTurnOnSection(APIView):
                 return Response(resp.data, status=status.HTTP_400_BAD_REQUEST)
             else:
                 if not section.is_on:
-                    scrpi_client.set_color(f'#{section.color.hex}', section.sc_rpi_id)
+                    scrpi_client.set_color(f'#{section.color.hex}', section.hw_id)
                     section.is_on = True
                     section.save()
                     return Response({}, status=status.HTTP_200_OK)

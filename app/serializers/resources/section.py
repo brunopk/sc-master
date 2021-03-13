@@ -8,7 +8,7 @@ class ResrSection(ModelSerializer):
 
     class Meta:
         model = Section
-        exclude = ['static_design', 'sc_rpi_id']
+        exclude = ['static_design', 'hw_id']
 
     def validate(self, attrs):
         start = attrs.get('start')
