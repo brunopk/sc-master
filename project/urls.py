@@ -33,7 +33,7 @@ from app.views.token import Token
 
 # TODO fix multiple login with the same user (and not-expired token)
 # TODO new endpoint to remove sections
-# TODO new endpoint to get current sections
+# TODO new endpoint to get current sections (when access to multiple users be implemented)
 
 schema_view = get_schema_view(
    openapi.Info(
