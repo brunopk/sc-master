@@ -17,6 +17,7 @@ class Error(Enum):
     SCRPI_BAD_ADDRESS = 12
     SECTION_OVERLAPPING = 13
     SECTION_NOT_IN_ACTIVE_STATIC_DESIGN = 14
+    SECTION_IS_ALREADY_ON = 15
 
     def __str__(self):
         return self.name
