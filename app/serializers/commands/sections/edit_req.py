@@ -3,7 +3,6 @@ from rest_framework.serializers import Serializer, IntegerField, ValidationError
 
 class CmdEditSectionReq(Serializer):
 
-    section_id = UUIDField(required=True)
     color = CharField(required=False)
     start = IntegerField(required=False)
     end = IntegerField(required=False)

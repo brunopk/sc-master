@@ -32,7 +32,6 @@ from app.views.token import Token
 
 # TODO change /commands/sections/edit to turn on of a section
 # TODO fix multiple login with the same user (and not-expired token)
-# TODO change /commands/sections/edit_section to /commands/section/{id}/edit
 
 schema_view = get_schema_view(
    openapi.Info(
@@ -58,8 +57,8 @@ urlpatterns = [
     url(r'^commands/turn_off$', CmdTurnOff.as_view()),
     url(r'^commands/reset$', CmdReset.as_view()),
     url(r'^commands/set_color$', CmdSetColor.as_view()),
-    url(r'^commands/sections/edit$', CmdEditSection.as_view()),
     url(r'^commands/sections/add$', CmdAddSection.as_view()),
+    url(r'^commands/sections/(?P<pk>\d+)/edit$', CmdEditSection.as_view()),
     url(r'^commands/sections/(?P<pk>\d+)/turn_on$', CmdTurnOnSection.as_view()),
     url(r'^commands/scrpi/connect$', CmdScRpiConnect.as_view()),
     url(r'^commands/scrpi/status$', CmdScRpiStatus.as_view()),
