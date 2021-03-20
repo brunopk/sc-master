@@ -19,6 +19,7 @@ class Error(Enum):
     SECTION_NOT_IN_ACTIVE_STATIC_DESIGN = 14
     SECTION_IS_ALREADY_ON = 15
     SECTION_IS_ALREADY_OFF = 16
+    STRIP_IS_ALREADY_ON = 17
 
     def __str__(self):
         return self.name

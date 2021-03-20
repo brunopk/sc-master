@@ -1,7 +1,7 @@
 import json
 import logging
 import socket as skt
-from typing import Union
+from typing import Union, List
 
 SCP_OK = 200
 
@@ -205,6 +205,26 @@ class ApiClient:
             'args': {
                 'start': start,
                 'end': end,
+            }
+        }
+        req = make_request(cmd, self.end_char)
+        self.send_request(req)
+        return self.recv_response()
+
+    @catch_errors()
+    def remove_sections(self, sections: List[str]) -> dict:
+        """
+        Removes sections specified in the list
+
+        :raises BrokenPipeError:
+        :raises ConnectionResetError:
+        :raises NotConnected:
+        :raises ApiError:
+        """
+        cmd = {
+            'name': 'remove_sections',
+            'args': {
+                'sections': sections
             }
         }
         req = make_request(cmd, self.end_char)
