@@ -10,6 +10,8 @@ from app.decorators import catch_errors
 from app.models import Section, scrpi_client
 from app.enums import Error
 
+# TODO: change  status.HTTP_400_BAD_REQUEST: RespError() to 409
+
 
 class CmdTurnOffSection(APIView):
 
