@@ -21,6 +21,7 @@ from drf_yasg import openapi
 from app.views.commands.set_color import CmdSetColor
 from app.views.commands.sections.edit import CmdEditSection
 from app.views.commands.sections.add import CmdAddSection
+from app.views.commands.sections.remove import CmdRemoveSections
 from app.views.commands.sections.turn_on import CmdTurnOnSection
 from app.views.commands.sections.turn_off import CmdTurnOffSection
 from app.views.commands.turn_off import CmdTurnOff
@@ -32,7 +33,6 @@ from app.views.resources.static_design import ResrStaticDesign
 from app.views.token import Token
 
 # TODO fix multiple login with the same user (and not-expired token)
-# TODO new endpoint to remove sections
 # TODO new endpoint to get current sections (when access to multiple users be implemented)
 
 schema_view = get_schema_view(
@@ -60,6 +60,7 @@ urlpatterns = [
     url(r'^commands/reset$', CmdReset.as_view()),
     url(r'^commands/set_color$', CmdSetColor.as_view()),
     url(r'^commands/sections/add$', CmdAddSection.as_view()),
+    url(r'^commands/sections/remove$', CmdRemoveSections.as_view()),
     url(r'^commands/sections/(?P<pk>\d+)/edit$', CmdEditSection.as_view()),
     url(r'^commands/sections/(?P<pk>\d+)/turn_on$', CmdTurnOnSection.as_view()),
     url(r'^commands/sections/(?P<pk>\d+)/turn_off$', CmdTurnOffSection.as_view()),
