@@ -76,6 +76,9 @@ class CmdAddSection(APIView):
         l2 = [(x.get('start'), x.get('end')) for x in new_sections]
 
         try:
+            # TODO remove unused i
+            # TODO new_command should send color (avoid sending set_color command)
+            # TODO sc_rpi should have a command to send multiple sections
             # raise exception if detects overlapping
             merge_sort(l1 + l2)
             aux = [(x.get('start'), x.get('end'), Color.objects.get(pk=x.get('color'))) for x in new_sections]
