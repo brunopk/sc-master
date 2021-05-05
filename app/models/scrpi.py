@@ -165,6 +165,58 @@ class ApiClient:
         self.send_request(req)
 
     @catch_errors()
+    def status(self):
+        """
+        Gets information of the current status of sc-rpi
+
+        :raises BrokenPipeError:
+        :raises ConnectionResetError:
+        :raises NotConnected:
+        :raises ApiError:
+        """
+        cmd = {"name": "status"}
+        req = make_request(cmd, self.end_char)
+        self.send_request(req)
+
+    @catch_errors()
+    def turn_on(self, section_id: str = None) -> dict:
+        """
+        Turns on a specific sections or the whole strip
+
+        :raises BrokenPipeError:
+        :raises ConnectionResetError:
+        :raises NotConnected:
+        :raises ApiError:
+        """
+        cmd = {'name': 'turn_on'}
+        if section_id is not None:
+            cmd['args'] = {
+                'section_id': section_id
+            }
+        req = make_request(cmd, self.end_char)
+        self.send_request(req)
+        return self.recv_response()
+
+    @catch_errors()
+    def turn_off(self, section_id: str = None) -> dict:
+        """
+        Turns on a specific sections or the whole strip
+
+        :raises BrokenPipeError:
+        :raises ConnectionResetError:
+        :raises NotConnected:
+        :raises ApiError:
+        """
+        cmd = {'name': 'turn_off'}
+        if section_id is not None:
+            cmd['args'] = {
+                'section_id': section_id
+            }
+        req = make_request(cmd, self.end_char)
+        self.send_request(req)
+        return self.recv_response()
+
+    @catch_errors()
     def edit_section(self, section_id: str, start: int = None, end: int = None, color: str = None) -> dict:
         """
         Edit section
@@ -227,28 +279,6 @@ class ApiClient:
                 'sections': sections
             }
         }
-        req = make_request(cmd, self.end_char)
-        self.send_request(req)
-        return self.recv_response()
-
-    @catch_errors()
-    def set_color(self, color: str, section_id: str = None) -> dict:
-        """
-        Sets color for all LEDs in the strip or in a specific section
-
-        :raises BrokenPipeError:
-        :raises ConnectionResetError:
-        :raises NotConnected:
-        :raises ApiError:
-        """
-        cmd = {
-            'name': 'set_color',
-            'args': {
-                'color': color
-            }
-        }
-        if section_id is not None:
-            cmd['args']['id'] = section_id
         req = make_request(cmd, self.end_char)
         self.send_request(req)
         return self.recv_response()
