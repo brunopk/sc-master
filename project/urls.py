@@ -24,6 +24,7 @@ from app.views.commands.sections.add import CmdAddSection
 from app.views.commands.sections.remove import CmdRemoveSections
 from app.views.commands.sections.turn_on import CmdTurnOnSection
 from app.views.commands.sections.turn_off import CmdTurnOffSection
+from app.views.commands.turn_on import CmdTurnOn
 from app.views.commands.turn_off import CmdTurnOff
 from app.views.commands.reset import CmdReset
 from app.views.commands.scrpi.connect import CmdScRpiConnect
@@ -33,7 +34,7 @@ from app.views.resources.static_design import ResrStaticDesign
 from app.views.token import Token
 
 # TODO fix multiple login with the same user (and not-expired token)
-# TODO new endpoint to get current sections (when access to multiple users be implemented)
+# TODO new endpoint to get current sections (when multiple users access be implemented)
 
 schema_view = get_schema_view(
    openapi.Info(
@@ -57,6 +58,7 @@ urlpatterns = [
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     url(r'^token', Token.as_view()),
     url(r'^commands/turn_off$', CmdTurnOff.as_view()),
+    url(r'^commands/turn_on$', CmdTurnOn.as_view()),
     url(r'^commands/reset$', CmdReset.as_view()),
     url(r'^commands/set_color$', CmdSetColor.as_view()),
     url(r'^commands/sections/add$', CmdAddSection.as_view()),
