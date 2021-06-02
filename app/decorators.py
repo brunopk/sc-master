@@ -1,3 +1,4 @@
+import traceback
 from functools import wraps
 from rest_framework import status
 from rest_framework.response import Response
@@ -32,7 +33,7 @@ def catch_errors():
                 return view_func(self, request, *args, **kwargs)
             # for instance when violating model attribute unique constraint
             except IntegrityError as ex:
-                logger.exception(ex)
+                logger.exception(traceback.format_exc())
                 _status = status.HTTP_409_CONFLICT
                 _error = RespError({
                     'code': int(Error.CANNOT_CREATE_ELEMENT),
@@ -40,7 +41,7 @@ def catch_errors():
                     'description': str(ex)
                 })
             except ParseError as ex:
-                logger.exception(ex)
+                logger.exception(traceback.format_exc())
                 _status = status.HTTP_400_BAD_REQUEST
                 _error = RespError({
                     'code': int(Error.PARSE_ERROR),
@@ -48,7 +49,7 @@ def catch_errors():
                     'description': str(ex)
                 })
             except Http404 as ex:
-                logger.exception(ex)
+                logger.exception(traceback.format_exc())
                 _status = status.HTTP_400_BAD_REQUEST
                 _error = RespError({
                     'code': int(Error.RESOURCE_NOT_FOUND),
@@ -56,7 +57,7 @@ def catch_errors():
                     'description': str(ex)
                 })
             except ObjectDoesNotExist as ex:
-                logger.exception(ex)
+                logger.exception(traceback.format_exc())
                 _status = status.HTTP_404_NOT_FOUND
                 _error = RespError({
                     'code': int(Error.RESOURCE_NOT_FOUND),
@@ -65,7 +66,7 @@ def catch_errors():
                 })
             # TODO diferentiate errors (for instance in [{'id': [ErrorDetail(string='section with this id already exists.', code='unique')], 'color_hex': [ErrorDetail(string='Invalid pk "string" - object does not exist.', code='does_not_exist')]}])
             except ValidationError as ex:
-                logger.exception(ex)
+                logger.exception(traceback.format_exc())
                 _status = status.HTTP_400_BAD_REQUEST
                 _error = RespError({
                     'code': int(Error.BAD_REQUEST),
@@ -73,7 +74,7 @@ def catch_errors():
                     'description': str(ex)
                 })
             except ScRpiError as ex:
-                logger.exception(ex)
+                logger.exception(traceback.format_exc())
                 _status = ex.status
                 _error = RespError({
                     'code': int(Error.SCRPI_SERVICE_ERROR),
@@ -81,61 +82,61 @@ def catch_errors():
                     'description': f'{ex.message}: {ex.result}'
                 })
             # when connecting to sc-rpi
-            except BadAddress as ex:
-                logger.exception(ex)
+            except BadAddress:
+                logger.exception(traceback.format_exc())
                 _status = status.HTTP_400_BAD_REQUEST
                 _error = RespError({
-                    'code': Error.SCRPI_BAD_ADDRESS,
+                    'code': int(Error.SCRPI_BAD_ADDRESS),
                     'message': str(Error.SCRPI_BAD_ADDRESS),
                     'description': 'Operating system do not allow address.'
                 })
             # when connecting to sc-rpi
-            except BadPort as ex:
-                logger.exception(ex)
+            except BadPort:
+                logger.exception(traceback.format_exc())
                 _status = status.HTTP_400_BAD_REQUEST
                 _error = RespError({
-                    'code': Error.SCRPI_BAD_PORT,
+                    'code': int(Error.SCRPI_BAD_PORT),
                     'message': str(Error.SCRPI_BAD_PORT),
                     'description': 'Operating system do not allow port.'
                 })
-            except NotConnected as ex:
-                logger.exception(ex)
+            except NotConnected:
+                logger.exception(traceback.format_exc())
                 _status = status.HTTP_503_SERVICE_UNAVAILABLE
                 _error = RespError({
-                    'code': Error.SCRPI_NOT_CONNECTED,
+                    'code': int(Error.SCRPI_NOT_CONNECTED),
                     'message': str(Error.SCRPI_NOT_CONNECTED),
                     'description': 'Connect to sc-rpi using /connect_scrpi endpoint.'
                 })
             # when connecting to sc-rpi
-            except ConnectionRefusedError as ex:
-                logger.exception(ex)
+            except ConnectionRefusedError:
+                logger.exception(traceback.format_exc())
                 _status = status.HTTP_404_NOT_FOUND
                 _error = RespError({
-                    'code': Error.SCRPI_CONNECTION_REFUSED,
+                    'code': int(Error.SCRPI_CONNECTION_REFUSED),
                     'message': str(Error.SCRPI_CONNECTION_REFUSED),
                     'description': 'Cannot found a running instance of sc-rpi in the requested address and port.'
                 })
-            except BrokenPipeError as ex:
-                logger.exception(ex)
+            except BrokenPipeError:
+                logger.exception(traceback.format_exc())
                 _status = status.HTTP_503_SERVICE_UNAVAILABLE
                 _error = RespError({
-                    'code': Error.SCRPI_CONNECTION_ERROR,
+                    'code': int(Error.SCRPI_CONNECTION_ERROR),
                     'message': str(Error.SCRPI_CONNECTION_ERROR),
                     'description': 'See server logs'
                 })
-            except ConnectionResetError as ex:
-                logger.exception(ex)
+            except ConnectionResetError:
+                logger.exception(traceback.format_exc())
                 _status = status.HTTP_503_SERVICE_UNAVAILABLE
                 _error = RespError({
-                    'code': Error.SCRPI_CONNECTION_ERROR,
+                    'code': int(Error.SCRPI_CONNECTION_ERROR),
                     'message': str(Error.SCRPI_CONNECTION_ERROR),
                     'description': 'See server logs'
                 })
-            except Exception as ex:
-                logger.exception(ex)
+            except Exception:
+                logger.exception(traceback.format_exc())
                 _status = status.HTTP_500_INTERNAL_SERVER_ERROR
                 _error = RespError({
-                    'code': Error.INTERNAL_SERVER_ERROR,
+                    'code': int(Error.INTERNAL_SERVER_ERROR),
                     'message': str(Error.INTERNAL_SERVER_ERROR),
                     'description': 'See server logs'
                 })
