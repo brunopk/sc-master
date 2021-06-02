@@ -1,6 +1,16 @@
 from enum import Enum
 
 
+class ScRpiStatus(Enum):
+
+    OK = 1
+    HAS_ERROR = 2
+    NOT_CONNECTED = 3
+
+    def __str__(self):
+        return self.name
+
+
 class Error(Enum):
 
     BAD_REQUEST = 1

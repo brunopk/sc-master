@@ -5,28 +5,18 @@ from typing import Union, List
 
 SCP_OK = 200
 
+########################################################################################################################
+#                                                AUXILIARY FUNCTIONS                                                   #
+########################################################################################################################
+
 
 def make_request(cmd: dict, end_char: str):
     return json.dumps(cmd) + end_char
 
 
-def catch_errors():
-
-    def decorator(func):
-
-        def _wrapped_func(self, *args, **kwargs):
-            try:
-                result = func(self, *args, **kwargs)
-                self.last_error = None
-                return result
-            except Exception as ex:
-                if not isinstance(ex, ApiError):
-                    self.last_error = ex
-                raise ex
-        return _wrapped_func
-
-    return decorator
-
+########################################################################################################################
+#                                                   ERROR CLASSES                                                      #
+########################################################################################################################
 
 class BadAddress(Exception):
     pass
@@ -47,6 +37,10 @@ class ApiError(Exception):
         self.message = message
         self.result = result
 
+
+########################################################################################################################
+#                                                      MAIN CLASS                                                      #
+########################################################################################################################
 
 class ApiClient:
     """
@@ -98,7 +92,6 @@ class ApiClient:
         self.skt: skt.socket = None
         self.end_char = '\n'
         self.logger = logging.getLogger(__name__)
-        self.last_error: Union[Exception, None] = None
 
     def connect(self, address: str, port: int):
         """
@@ -112,7 +105,6 @@ class ApiClient:
         self.skt = skt.socket(skt.AF_INET, skt.SOCK_STREAM)
         try:
             self.skt.connect((address, port))
-            self.last_error = None
         except ConnectionRefusedError as ex:
             raise ex
         except skt.gaierror:
@@ -122,7 +114,6 @@ class ApiClient:
         except Exception as ex:
             raise ex
 
-    @catch_errors()
     def disconnect(self):
         """
         Disconnect
@@ -135,22 +126,7 @@ class ApiClient:
         cmd = {"name": "disconnect"}
         req = make_request(cmd, self.end_char)
         self.send_request(req)
-        self.last_error = None
 
-    @catch_errors()
-    def ping(self):
-        """
-        Sends a dummy command (invalid syntax) to test connection
-
-        :raises ApiError:
-        """
-
-        cmd = {"super": "duper"}
-        req = make_request(cmd, self.end_char)
-        self.send_request(req)
-        return self.recv_response()
-
-    @catch_errors()
     def reset(self):
         """
         Remove all sections
@@ -164,8 +140,7 @@ class ApiClient:
         req = make_request(cmd, self.end_char)
         self.send_request(req)
 
-    @catch_errors()
-    def status(self):
+    def status(self) -> dict:
         """
         Gets information of the current status of sc-rpi
 
@@ -177,8 +152,8 @@ class ApiClient:
         cmd = {"name": "status"}
         req = make_request(cmd, self.end_char)
         self.send_request(req)
+        return self.recv_response()
 
-    @catch_errors()
     def turn_on(self, section_id: str = None) -> dict:
         """
         Turns on a specific sections or the whole strip
@@ -197,7 +172,6 @@ class ApiClient:
         self.send_request(req)
         return self.recv_response()
 
-    @catch_errors()
     def turn_off(self, section_id: str = None) -> dict:
         """
         Turns on a specific sections or the whole strip
@@ -216,7 +190,6 @@ class ApiClient:
         self.send_request(req)
         return self.recv_response()
 
-    @catch_errors()
     def edit_section(self, section_id: str, start: int = None, end: int = None, color: str = None) -> dict:
         """
         Edit section
@@ -242,7 +215,6 @@ class ApiClient:
         self.send_request(req)
         return self.recv_response()
 
-    @catch_errors()
     def new_section(self, start: int, end: str) -> dict:
         """
         Defines a new section
@@ -263,7 +235,6 @@ class ApiClient:
         self.send_request(req)
         return self.recv_response()
 
-    @catch_errors()
     def remove_sections(self, sections: List[str]) -> dict:
         """
         Removes sections specified in the list

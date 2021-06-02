@@ -1,11 +1,11 @@
-from rest_framework.serializers import Serializer, CharField, BooleanField, IntegerField
+from rest_framework.serializers import Serializer, CharField, IntegerField, BooleanField
 
 
 class CmdScRpiStatusResp(Serializer):
 
-    led_number = CharField(required=True)
-    is_error = BooleanField(required=True)
-    last_exception = CharField(required=False)
+    number_of_led = IntegerField(required=False)
+    status = CharField(required=True)
+    status_details = CharField(required=False)
 
     def update(self, instance, validated_data):
         pass
