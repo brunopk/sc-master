@@ -2,8 +2,6 @@ from rest_framework.serializers import ModelSerializer, ValidationError
 from app.models import Section
 
 
-# TODO maybe is better to exclude remove is_on or put it readonly
-
 class ResrSection(ModelSerializer):
 
     class Meta:
