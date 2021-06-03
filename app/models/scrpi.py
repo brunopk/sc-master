@@ -1,46 +1,12 @@
 import json
 import logging
 import socket as skt
-from typing import Union, List
-
-SCP_OK = 200
-
-########################################################################################################################
-#                                                AUXILIARY FUNCTIONS                                                   #
-########################################################################################################################
-
-
-def make_request(cmd: dict, end_char: str):
-    return json.dumps(cmd) + end_char
-
-
-########################################################################################################################
-#                                                   ERROR CLASSES                                                      #
-########################################################################################################################
-
-class BadAddress(Exception):
-    pass
-
-
-class BadPort(Exception):
-    pass
-
-
-class NotConnected(Exception):
-    pass
-
-
-class ApiError(Exception):
-
-    def __init__(self, status: int, message: str, result: dict):
-        self.status = status
-        self.message = message
-        self.result = result
-
+from typing import List
 
 ########################################################################################################################
 #                                                      MAIN CLASS                                                      #
 ########################################################################################################################
+
 
 class ApiClient:
     """
@@ -124,7 +90,7 @@ class ApiClient:
         :raises ApiError:
         """
         cmd = {"name": "disconnect"}
-        req = make_request(cmd, self.end_char)
+        req = stringify_command(cmd, self.end_char)
         self.send_request(req)
 
     def reset(self):
@@ -137,7 +103,7 @@ class ApiClient:
         :raises ApiError:
         """
         cmd = {"name": "reset"}
-        req = make_request(cmd, self.end_char)
+        req = stringify_command(cmd, self.end_char)
         self.send_request(req)
 
     def status(self) -> dict:
@@ -150,7 +116,7 @@ class ApiClient:
         :raises ApiError:
         """
         cmd = {"name": "status"}
-        req = make_request(cmd, self.end_char)
+        req = stringify_command(cmd, self.end_char)
         self.send_request(req)
         return self.recv_response()
 
@@ -168,7 +134,7 @@ class ApiClient:
             cmd['args'] = {
                 'section_id': section_id
             }
-        req = make_request(cmd, self.end_char)
+        req = stringify_command(cmd, self.end_char)
         self.send_request(req)
         return self.recv_response()
 
@@ -186,7 +152,7 @@ class ApiClient:
             cmd['args'] = {
                 'section_id': section_id
             }
-        req = make_request(cmd, self.end_char)
+        req = stringify_command(cmd, self.end_char)
         self.send_request(req)
         return self.recv_response()
 
@@ -211,27 +177,26 @@ class ApiClient:
             cmd['args']['end'] = end
         if color is not None:
             cmd['args']['color'] = color
-        req = make_request(cmd, self.end_char)
+        req = stringify_command(cmd, self.end_char)
         self.send_request(req)
         return self.recv_response()
 
-    def new_section(self, start: int, end: str) -> dict:
+    def section_add(self, args: dict) -> dict:
         """
-        Defines a new section
+        Creates sections
 
+        :param args: command arguments (see https://github.com/brunopk/sc-rpi/blob/master/doc/commands.md#section_add)
         :raises BrokenPipeError:
         :raises ConnectionResetError:
         :raises NotConnected:
         :raises ApiError:
+        :return: data on 'result' field (see https://github.com/brunopk/sc-rpi/blob/master/doc/commands.md#section_add)
         """
         cmd = {
-            'name': 'new_section',
-            'args': {
-                'start': start,
-                'end': end,
-            }
+            'name': 'section_add',
+            'args': args
         }
-        req = make_request(cmd, self.end_char)
+        req = stringify_command(cmd, self.end_char)
         self.send_request(req)
         return self.recv_response()
 
@@ -250,10 +215,43 @@ class ApiClient:
                 'sections': sections
             }
         }
-        req = make_request(cmd, self.end_char)
+        req = stringify_command(cmd, self.end_char)
         self.send_request(req)
         return self.recv_response()
 
 
 scrpi_client = ApiClient()
+SCP_OK = 200
+
+
+########################################################################################################################
+#                                                   ERROR CLASSES                                                      #
+########################################################################################################################
+
+class BadAddress(Exception):
+    pass
+
+
+class BadPort(Exception):
+    pass
+
+
+class NotConnected(Exception):
+    pass
+
+
+class ApiError(Exception):
+
+    def __init__(self, status: int, message: str, result: dict):
+        self.status = status
+        self.message = message
+        self.result = result
+
+########################################################################################################################
+#                                                AUXILIARY FUNCTIONS                                                   #
+########################################################################################################################
+
+
+def stringify_command(cmd: dict, end_char: str):
+    return json.dumps(cmd) + end_char
 

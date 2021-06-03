@@ -1,4 +1,4 @@
-from rest_framework.serializers import Serializer, IntegerField, CharField, ValidationError
+from rest_framework.serializers import Serializer, IntegerField, ValidationError
 
 
 class SectionReq(Serializer):
