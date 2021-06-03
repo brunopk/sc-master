@@ -22,3 +22,6 @@ class SectionReq(Serializer):
     def update(self, instance, validated_data):
         pass
 
+    class Meta:
+        ref_name = None
+
