@@ -18,7 +18,6 @@ from django.conf.urls import url
 from rest_framework import permissions, routers
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
-from app.views.commands.set_color import CmdSetColor
 from app.views.commands.sections.edit import CmdEditSection
 from app.views.commands.sections.add import CmdAddSection
 from app.views.commands.sections.remove import CmdRemoveSections
@@ -59,7 +58,6 @@ urlpatterns = [
     url(r'^commands/turn_off$', CmdTurnOff.as_view()),
     url(r'^commands/turn_on$', CmdTurnOn.as_view()),
     url(r'^commands/reset$', CmdReset.as_view()),
-    url(r'^commands/set_color$', CmdSetColor.as_view()),
     url(r'^commands/sections/add$', CmdAddSection.as_view()),
     url(r'^commands/sections/remove$', CmdRemoveSections.as_view()),
     url(r'^commands/sections/(?P<pk>\d+)/edit$', CmdEditSection.as_view()),
