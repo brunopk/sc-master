@@ -200,7 +200,7 @@ class ApiClient:
         self.send_request(req)
         return self.recv_response()
 
-    def remove_sections(self, sections: List[str]) -> dict:
+    def section_remove(self, sections: List[str]) -> dict:
         """
         Removes sections specified in the list
 
@@ -210,7 +210,7 @@ class ApiClient:
         :raises ApiError:
         """
         cmd = {
-            'name': 'remove_sections',
+            'name': 'section_remove',
             'args': {
                 'sections': sections
             }

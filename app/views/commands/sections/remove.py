@@ -38,9 +38,9 @@ class CmdRemoveSections(APIView):
             return Response(error.data, status=status.HTTP_404_NOT_FOUND)
         else:
             with transaction.atomic():
-                sections_to_be_removed_aux = [x.hw_id for x in sections_to_be_removed]
+                sections_to_be_removed_aux = [x.hw_id.__str__() for x in sections_to_be_removed]
                 sections_to_be_removed.delete()
-                scrpi_client.remove_sections(sections_to_be_removed_aux)
+                scrpi_client.section_remove(sections_to_be_removed_aux)
             return Response({}, status=status.HTTP_200_OK)
 
 
