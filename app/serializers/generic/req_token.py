@@ -11,3 +11,6 @@ class ReqToken(Serializer):
 
     def create(self, validated_data):
         raise NotImplemented()
+
+    class Meta:
+        ref_name = None
