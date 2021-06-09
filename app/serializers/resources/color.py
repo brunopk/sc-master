@@ -35,15 +35,15 @@ class ResrColor(Serializer):
     # noinspection PyMethodMayBeStatic
     def validate_hex(self, value):
         try:
-            hex_to_rgb('#' + value)
+            hex_to_rgb(value)
             return value
         except ValueError:
-            raise ValidationError('Invalid hex (example aabbcc)')
+            raise ValidationError('Invalid hex (example: #aabbcc)')
 
     def create(self, validated_data):
         if 'hex' in validated_data.keys():
             hex_value = validated_data.get('hex')
-            rgb_tuple = hex_to_rgb('#' + hex_value)
+            rgb_tuple = hex_to_rgb(hex_value)
         else:
             rgb_tuple = self.validate_rgb(validated_data.get('rgb'))
             hex_value = rgb_to_hex(rgb_tuple)[1:]
