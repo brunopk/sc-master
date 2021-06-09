@@ -75,7 +75,7 @@ def catch_errors():
                 })
             except ScRpiError as ex:
                 logger.exception(traceback.format_exc())
-                _status = ex.status
+                _status = status.HTTP_500_INTERNAL_SERVER_ERROR
                 _error = RespError({
                     'code': int(Error.SCRPI_SERVICE_ERROR),
                     'message': str(Error.SCRPI_SERVICE_ERROR),
