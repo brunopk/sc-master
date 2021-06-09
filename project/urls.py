@@ -34,7 +34,6 @@ from app.views.resources.static_design import ResrStaticDesign
 from app.views.token import Token
 
 # TODO fix multiple login with the same user (and not-expired token)
-# TODO new endpoint to get current sections (when multiple users access be implemented)
 
 schema_view = get_schema_view(
    openapi.Info(
