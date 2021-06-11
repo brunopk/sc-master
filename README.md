@@ -53,7 +53,7 @@ First, register an application on http://localhost:8000/o/applications/. Click o
 - Client Type: confidential
 - Authorization Grant Type: Resource owner password-based
 
-> Remember the client id and the client password to authenticate requests (see [Testing the API](#Testing-the-API)).
+> Remember the client id and the client secret to authenticate requests (see [Testing the API](#Testing-the-API)).
 
 
 ## Creating new models
