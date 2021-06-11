@@ -22,7 +22,7 @@ The output of `python manage.py runserver` will show URL where the API is expose
 To run the server on different port use:
 
 ```
-$ python manage.py runserver localhost:<port>
+python manage.py runserver localhost:<port>
 ```
 
 ## Creating a virtual environment (venv)
@@ -45,7 +45,7 @@ It is also possible to create normal user (not superusers).
 
 ## Configure authentication
 
-Authentication to the API is done using Oauth2 protocol with the "password" flow. It is **requiered** to invoke any endpoint (see [Testing the API](#Testing-the-API)). 
+Authentication to the API is done using Oauth2 protocol with the "password" flow. It is **required** to invoke any endpoint (see [Testing the API](#Testing-the-API)). 
 
 First, register an application on http://localhost:8000/o/applications/. Click on the link to create a new application and fill the form with the following data:
 
@@ -64,7 +64,7 @@ First, register an application on http://localhost:8000/o/applications/. Click o
 4. Create migrations: `python manage.py makemigrations`.
 5. Apply migrations on database: `python manage.py migrate`.
 
-To run the API again, repeat steps 6 y 7 mentioned on *Starting the API* to recreate OAuth2 configurations which are saved on database.
+> This will destroy the database so it would be necessary to repeat all step mentioned at the beginning of this README to start the API again.
 
 ## Testing the API
 
