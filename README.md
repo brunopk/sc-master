@@ -47,13 +47,13 @@ It is also possible to create normal user (not superusers).
 
 Authentication to the API is done using Oauth2 protocol ("password" flow) to protect endpoints.
 
-Before invoking any endpoint, *register an application* (the entity or person which consume endpoints) on http://localhost:8000/o/applications/ filling the form with this considerations:
+Before invoking any endpoint, **register an application** (entity or person which consumes endpoints) on http://localhost:8000/o/applications/ filling the form following this considerations:
 
 - Name: just a name of your choice
 - Client Type: confidential
 - Authorization Grant Type: Resource owner password-based
 
-> Remember the client id and the client secret to authenticate requests (see [Testing the API](#Testing-the-API)).
+> Remember the client id and the client secret (see [Testing the API](#Testing-the-API)).
 
 
 ## Creating new models
