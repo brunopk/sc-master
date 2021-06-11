@@ -10,7 +10,7 @@ Provides a backend as a REST API for [sc-web](https://github.com/brunopk/sc-web)
 4. Create migrations on `app/migrations` : python manage.py makemigrations`
 5. Create database and apply migrations: `python manage.py migrate`
 6. [Create a Django user](#Creating-Django-users).
-7. [Configure authentication](#Configure-authentication).  
+7. [Configure authentication](#Authentication).  
 8. Start the server: `python manage.py runserver`
 
 > Steps 4 and 5 are only required the first time running the server or when [creating new models](#Creating-new-models).
@@ -43,11 +43,11 @@ virtualenv -m <path to the python interpreter> <path of the venv>
 
 It is also possible to create normal user (not superusers).
 
-## Configure authentication
+## Authentication
 
-Authentication to the API is done using Oauth2 protocol with the "password" flow. It is **required** to invoke any endpoint (see [Testing the API](#Testing-the-API)). 
+Authentication to the API is done using Oauth2 protocol ("password" flow) to protect endpoints.
 
-First, register an application on http://localhost:8000/o/applications/. Click on the link to create a new application and fill the form with the following data:
+Before invoking any endpoint, *register an application* (the entity or person which consume endpoints) on http://localhost:8000/o/applications/ filling the form with this considerations:
 
 - Name: just a name of your choice
 - Client Type: confidential
