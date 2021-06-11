@@ -13,11 +13,11 @@ Provides a backend as a REST API for [sc-web](https://github.com/brunopk/sc-web)
 7. [Configure authentication](#Configure-authentication).  
 8. Start the server: `python manage.py runserver`
 
-> Steps 4 and 5 are only required the first time running the server or when [adding new models](#Creating-new-models))
+> Steps 4 and 5 are only required the first time running the server or when [creating new models](#Creating-new-models).
 
-The output of `python manage.py runserver` will show URL, 
+The output of `python manage.py runserver` will show URL where the API is exposed.
 
-> The default URL is: http://localhost:8000. 
+> The default URL for the API is: http://localhost:8000. 
 
 To run the server on different port use:
 
