@@ -45,7 +45,7 @@ It is also possible to create normal user (not superusers).
 
 ## Configure authentication
 
-Authentication to the API is done using Oauth2 protocol with the "password" flow. It is **requiered** to invoke any endpoint (see [test endpoints](#Swagger-interactive-documentation)). 
+Authentication to the API is done using Oauth2 protocol with the "password" flow. It is **requiered** to invoke any endpoint (see [Testing the API](#Testing-the-API)). 
 
 First, register an application on http://localhost:8000/o/applications/. Click on the link to create a new application and fill the form with the following data:
 
@@ -53,7 +53,7 @@ First, register an application on http://localhost:8000/o/applications/. Click o
 - Client Type: confidential
 - Authorization Grant Type: Resource owner password-based
 
-> Remember the client id and the client password to connect sc-web to sc-master or [test endpoints](#Swagger-interactive-documentation).
+> Remember the client id and the client password to authenticate requests (see [Testing the API](#Testing-the-API)).
 
 
 ## Creating new models
@@ -66,9 +66,9 @@ First, register an application on http://localhost:8000/o/applications/. Click o
 
 To run the API again, repeat steps 6 y 7 mentioned on *Starting the API* to recreate OAuth2 configurations which are saved on database.
 
-## Swagger interactive documentation
+## Testing the API
 
-> Interactive Swagger API documentation is shown opening http://localhost:8000 on any browser.
+> The API can be tested using the interactive Swagger API documentation opening http://localhost:8000 on any browser.
 
 - JSON: http://localhost:8000/swagger.json
 - YAML: http://localhost:8000/swagger.yaml
