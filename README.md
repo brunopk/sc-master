@@ -45,7 +45,7 @@ It is also possible to create normal user (not superusers).
 
 ## Configure authentication
 
-Authentication to the API is done using Oauth2 protocol with the "password" flow. It is **requiered** to allow sc-web to connect to sc-master or [test endpoints](#Swagger-interactive-documentation). 
+Authentication to the API is done using Oauth2 protocol with the "password" flow. It is **requiered** to invoke any endpoint (see [test endpoints](#Swagger-interactive-documentation)). 
 
 First, register an application on http://localhost:8000/o/applications/. Click on the link to create a new application and fill the form with the following data:
 
