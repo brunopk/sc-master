@@ -9,7 +9,7 @@ Provides a backend as a REST API for [sc-web](https://github.com/brunopk/sc-web)
 3. Install dependencies: `pip install -r requirements.txt`.
 4. Create migrations on `app/migrations` : python manage.py makemigrations` *
 5. Create database and apply migrations: `python manage.py migrate` *
-6. [Create Django superuser](#Creating-Django-superuser).
+6. [Create a Django user](#Creating-Django-users).
 7. [Configure authentication](#Configure-authentication).  
 8. Start the server: `python manage.py runserver`
 
@@ -37,7 +37,7 @@ or
 virtualenv -m <path to the python interpreter> <path of the venv>
 ```
 
-## Creating Django superuser
+## Creating Django users
 
 ```python manage.py createsuperuser```
 
@@ -78,7 +78,7 @@ To authenticate open the authorize dialog on  http://localhost:8000, and complet
 
 ![Swagger online documentation](doc/swagger.png)
 
-The user and password credentials are set when you [create a new django user](#Creating-Django-superuser).
+The user and password credentials are set when [creating django users](#Creating-Django-users).
 
 ## Future improvements:
 
