@@ -30,7 +30,6 @@ from app.views.commands.scrpi.connect import CmdScRpiConnect
 from app.views.commands.scrpi.status import CmdScRpiStatus
 from app.views.resources.color import ResrColor
 from app.views.resources.static_design import ResrStaticDesign
-from app.views.token import Token
 
 # TODO fix multiple login with the same user (and not-expired token)
 
@@ -54,7 +53,6 @@ urlpatterns = [
     path('o/', include('oauth2_provider.urls', namespace='oauth2_provider')),
     url(r'^$', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
-    url(r'^token', Token.as_view()),
     url(r'^commands/turn_off$', CmdTurnOff.as_view()),
     url(r'^commands/turn_on$', CmdTurnOn.as_view()),
     url(r'^commands/reset$', CmdReset.as_view()),

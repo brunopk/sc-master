@@ -7,31 +7,24 @@ Provides a backend as a REST API for [sc-web](https://github.com/brunopk/sc-web)
 1. Create a virtual environment (if wasn't done before).
 2. Activate the virtual environment: `source <path of the venv>/bin/activate`.
 3. Install dependencies: `pip install -r requirements.txt`.
-4. Create migrations on `app/migrations` : python manage.py makemigrations`.
-5. Create database and apply migrations: `python manage.py migrate`.
-6. Create Django superuser (see section *Creating Django superuser*).
-7. Configure the API (see section *Configuration*).
-8. Init the server: `python manage.py runserver`
-9. Register consumer applications for OAuth2 (if wasn't done before).  
-
-The output of `python manage.py runserver` will show URL and port, default is http://localhost:8000 (open it on any browser to see API documentation).`Steps 4 y 5 are only required the first time running the server or when adding new models (see also *Creating new models*).
+4. Create migrations on `app/migrations` : python manage.py makemigrations` (required the first time running the server or when [adding new models](#Creating-new-models)).
+5. Create database and apply migrations: `python manage.py migrate` (required the first time running the server or when [adding new models](#Creating-new-models)).
+6. [Create Django superuser](#Creating-Django-superuser).
+7. [Configure authentication](#Configure-authentication).  
+8. Start the server: Init the server: `python manage.py runserver`
 
 
-### Configuration
+The output of `python manage.py runserver` will show URL, 
 
-Most properties are defined as constants on `project/settings.py` .
+> The default URL is: http://localhost:8000. 
 
-Connection to [sc-rpi](https://github.com/brunopk/sc-rpi) is disabled by default to facilitate development. If you want to enable the connection again, for instance to probe the system with all components ([sc-rpi](https://github.com/brunopk/sc-rpi), [sc-master](https://github.com/brunopk/sc-master) and [sc-web](https://github.com/brunopk/sc-web)):
+To run the server on different port use:
 
-1. Set `SC_CONNECTION_DISABLED = True` on `project/settings.py` 
-2. Run django with `--noreload` argument: `python manage.py runserver --noreload`.
+```
+$ python manage.py runserver localhost:<port>
+```
 
-To disable connection to [sc-rpi](https://github.com/brunopk/sc-rpi) and run [sc-master](https://github.com/brunopk/sc-master) with hot-reloading again:
-
-1. Set `SC_CONNECTION_DISABLED = False` on `project/settings.py` 
-2. Run django **without** arguments.
-
-### Creating a virtual environment (venv)
+## Creating a virtual environment (venv)
 
 ```
 python3 -m venv <path of the venv>
@@ -43,27 +36,24 @@ or
 virtualenv -m <path to the python interpreter> <path of the venv>
 ```
 
-### Creating Django superuser
+## Creating Django superuser
 
 ```python manage.py createsuperuser```
 
+It is also possible to create normal user (not superusers).
 
-### Register consumer applications for OAuth2
+## Configure authentication
 
-This is **requiered** to allow sc-web to connect to sc-master and to test services with Postman or another client. To obtain 
-a valid access_token first we must register an application. Point your browser at:
-
-http://localhost:8000/o/applications/
-Click on the link to create a new application and fill the form with the following data:
+Authentication to the API is done using Oauth2 protocol with the "password" flow. It is **requiered** to allow sc-web to connect to sc-master or [test endpoints](#Swagger-interactive-documentation). First, register an application on http://localhost:8000/o/applications/. Click on the link to create a new application and fill the form with the following data:
 
 - Name: just a name of your choice
 - Client Type: confidential
 - Authorization Grant Type: Resource owner password-based
 
-It will show the client secret and the client id, put it `CLIENT_ID` variable on `project/settings.py`.
+> Remember the client id and the client password to connect sc-web to sc-master or [test endpoints](#Swagger-interactive-documentation).
 
 
-### Creating new models
+## Creating new models
 
 1. Create a new module with the model class on `app/models/`.
 2. Import the model on `app/models/__init__.py` (for instance `from .new_model import NewModel`)
@@ -73,44 +63,28 @@ It will show the client secret and the client id, put it `CLIENT_ID` variable on
 
 To run the API again, repeat steps 6 y 7 mentioned on *Starting the API* to recreate OAuth2 configurations which are saved on database.
 
-## Authentication
+## Swagger interactive documentation
 
-URL :  http://localhost:8000/token/
-
-Request body example : 
-
-```json
-{
-    "username": "admin",
-    "password": "admin"
-}
-```
-
-## Swagger documentation
+> Interactive Swagger API documentation is shown opening http://localhost:8000 on any browser.
 
 - JSON: http://localhost:8000/swagger.json
 - YAML: http://localhost:8000/swagger.yaml
 - swagger-ui: http://localhost:8000/swagger/
 
-More information at: https://github.com/axnsan12/drf-yasg
-
-To authenticate swagger, get the token with `curl` or Postman, copy-paste it on the authorization dialog and add 
-"Bearer " at the beginning, for instance "Bearer PnoA4DtzklANjjcrOrUxQoKXIv6ajc" :
+To authenticate open the authorize dialog on  http://localhost:8000, and complete the corresponding fields:
 
 ![Swagger online documentation](doc/swagger.png)
 
-
+The user and password credentials are set when you [create a new django user](#Creating-Django-superuser).
 
 ## Future improvements:
 
-- PostgreSQL (currently it's working with Sqlite).
-- Generalize @swagger_auto_schema(status.HTTP_400_BAD_REQUEST: serializers.ErrorResponse()}) for all APIViews.
+- PostgreSQL or MongoDB (currently it's working with Sqlite).
 - Implement endpoint for token refreshing.
-- Periodically check if sc-driver is online.
-- Multiple user (not only and admin user).
 
 ## Links
 
 - [Creation of virtual environments](https://docs.python.org/3/library/venv.html)
 - [Quickstar Django REST Framework](http://www.django-rest-framework.org/tutorial/quickstart/)
 - [Django OAuth Toolkit](https://django-oauth-toolkit.readthedocs.io/en/latest/rest-framework/getting_started.html)
+- [Django API Documentation](https://github.com/axnsan12/drf-yasg)

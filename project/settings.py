@@ -47,12 +47,7 @@ INSTALLED_APPS = [
 OAUTH2_PROVIDER = {
     # this is the list of available scopes
     'SCOPES': {'read': 'Read scope', 'write': 'Write scope', 'groups': 'Access to your groups'},
-    'OAUTH2_BACKEND_CLASS': 'oauth2_provider.oauth2_backends.JSONOAuthLibCore'
 }
-
-ACCESS_TOKEN_EXPIRE_SECONDS = 3600
-TOKEN_SCOPE = 'read write'
-CLIENT_ID = 'BGY1T2q7ZhIT2wZJH5amFobGcr1ryLQ4QGrsy04d'
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
@@ -147,10 +142,14 @@ STATIC_URL = '/static/'
 SWAGGER_SETTINGS = {
     'USE_SESSION_AUTH': False,
     'SECURITY_DEFINITIONS': {
-      'Bearer': {
-            'type': 'apiKey',
-            'name': 'Authorization',
-            'in': 'header'
+    'Your App API - Swagger': {
+         'type': 'oauth2',
+         'authorizationUrl': '/yourapp/o/authorize',
+         'tokenUrl': 'o/token/',
+         'flow': 'password',
+         'scopes': {
+          'read:groups': 'read groups',
+         }
       }
    }
 }
