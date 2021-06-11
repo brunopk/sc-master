@@ -7,12 +7,13 @@ Provides a backend as a REST API for [sc-web](https://github.com/brunopk/sc-web)
 1. Create a virtual environment (if wasn't done before).
 2. Activate the virtual environment: `source <path of the venv>/bin/activate`.
 3. Install dependencies: `pip install -r requirements.txt`.
-4. Create migrations on `app/migrations` : python manage.py makemigrations` (required the first time running the server or when [adding new models](#Creating-new-models)).
-5. Create database and apply migrations: `python manage.py migrate` (required the first time running the server or when [adding new models](#Creating-new-models)).
+4. Create migrations on `app/migrations` : `python manage.py makemigrations` *
+5. Create database and apply migrations: `python manage.py migrate` *
 6. [Create Django superuser](#Creating-Django-superuser).
 7. [Configure authentication](#Configure-authentication).  
 8. Start the server: Init the server: `python manage.py runserver`
 
+* required only the first time running the server or when [adding new models](#Creating-new-models))
 
 The output of `python manage.py runserver` will show URL, 
 
@@ -44,7 +45,9 @@ It is also possible to create normal user (not superusers).
 
 ## Configure authentication
 
-Authentication to the API is done using Oauth2 protocol with the "password" flow. It is **requiered** to allow sc-web to connect to sc-master or [test endpoints](#Swagger-interactive-documentation). First, register an application on http://localhost:8000/o/applications/. Click on the link to create a new application and fill the form with the following data:
+Authentication to the API is done using Oauth2 protocol with the "password" flow. It is **requiered** to allow sc-web to connect to sc-master or [test endpoints](#Swagger-interactive-documentation). 
+
+First, register an application on http://localhost:8000/o/applications/. Click on the link to create a new application and fill the form with the following data:
 
 - Name: just a name of your choice
 - Client Type: confidential
