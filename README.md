@@ -7,11 +7,11 @@ Provides a backend as a REST API for [sc-web](https://github.com/brunopk/sc-web)
 1. Create a virtual environment (if wasn't done before).
 2. Activate the virtual environment: `source <path of the venv>/bin/activate`.
 3. Install dependencies: `pip install -r requirements.txt`.
-4. Create migrations on `app/migrations` : `python manage.py makemigrations` *
+4. Create migrations on `app/migrations` : python manage.py makemigrations` *
 5. Create database and apply migrations: `python manage.py migrate` *
 6. [Create Django superuser](#Creating-Django-superuser).
 7. [Configure authentication](#Configure-authentication).  
-8. Start the server: Init the server: `python manage.py runserver`
+8. Start the server: `python manage.py runserver`
 
 * required only the first time running the server or when [adding new models](#Creating-new-models))
 
