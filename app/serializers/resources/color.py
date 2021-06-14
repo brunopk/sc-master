@@ -45,10 +45,10 @@ class ResrColor(Serializer):
             hex_value = validated_data.get('hex')
             rgb_tuple = hex_to_rgb(hex_value)
         else:
-            rgb_tuple = self.validate_rgb(validated_data.get('rgb'))
+            rgb_tuple = validated_data.get('rgb')
             hex_value = rgb_to_hex(rgb_tuple)[1:]
 
-        return Color.objects.create(hex=hex_value, red=rgb_tuple[0], blue=rgb_tuple[1], green=rgb_tuple[2])
+        return Color.objects.create(hex=hex_value, red=rgb_tuple[0], green=rgb_tuple[1], blue=rgb_tuple[2])
 
     def to_representation(self, instance):
         return {
