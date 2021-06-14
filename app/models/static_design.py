@@ -11,3 +11,8 @@ class StaticDesign(Model):
 
     class Meta:
         db_table = 'app_static_design'
+
+
+# Initialization code (this will be run once after starting the server)
+StaticDesign.objects.filter(active=True).update(active=False)
+
