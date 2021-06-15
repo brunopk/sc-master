@@ -46,7 +46,7 @@ class ResrColor(Serializer):
             rgb_tuple = hex_to_rgb(hex_value)
         else:
             rgb_tuple = validated_data.get('rgb')
-            hex_value = rgb_to_hex(rgb_tuple)[1:]
+            hex_value = rgb_to_hex(rgb_tuple)
 
         return Color.objects.create(hex=hex_value, red=rgb_tuple[0], green=rgb_tuple[1], blue=rgb_tuple[2])
 
