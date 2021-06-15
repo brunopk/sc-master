@@ -3,13 +3,16 @@ from rest_framework.serializers import Serializer, IntegerField, ValidationError
 
 class CmdEditSectionReq(Serializer):
 
-    color = CharField(required=False)
+    color = IntegerField(required=False)
     start = IntegerField(required=False)
     end = IntegerField(required=False)
 
     def validate(self, attrs):
         start = attrs.get('start')
         end = attrs.get('end')
+        color = attrs.get('color')
+        if start is None and end is None and color is None:
+            raise ValidationError('Nothing to update')
         if start is not None and end is not None and start > end:
             raise ValidationError('Start cannot be larger than end')
         if start is not None and start < 0:

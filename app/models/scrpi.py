@@ -105,6 +105,7 @@ class ApiClient:
         cmd = {"name": "reset"}
         req = stringify_command(cmd, self.end_char)
         self.send_request(req)
+        return self.recv_response()
 
     def status(self) -> dict:
         """
@@ -156,7 +157,7 @@ class ApiClient:
         self.send_request(req)
         return self.recv_response()
 
-    def edit_section(self, section_id: str, start: int = None, end: int = None, color: str = None) -> dict:
+    def section_edit(self, section_id: str, start: int = None, end: int = None, color: str = None) -> dict:
         """
         Edit section
 
@@ -166,7 +167,7 @@ class ApiClient:
         :raises ApiError:
         """
         cmd = {
-            'name': 'edit_section',
+            'name': 'section_edit',
             'args': {
                 'section_id': section_id
             }

@@ -4,7 +4,7 @@ from oauth2_provider.contrib.rest_framework import TokenHasReadWriteScope
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status
 from rest_framework.exceptions import ValidationError
-from app.models import scrpi_client, Section
+from app.models import scrpi_client, Section, Color
 from app.serializers.generic.resp_error import RespError
 from app.serializers.generic.resp_ok import RespOk
 from app.serializers.commands.sections.edit_req import CmdEditSectionReq
@@ -43,8 +43,8 @@ class CmdEditSection(APIView):
                 hw_section_id = section.hw_id
                 start = serialized_request.data.get('start')
                 end = serialized_request.data.get('end')
-                color = serialized_request.data.get('color')
-                scrpi_client.edit_section(hw_section_id, start=start, end=end, color=color)
+                color = Color.objects.get(pk=serialized_request.data.get('color'))
+                scrpi_client.section_edit(hw_section_id.__str__(), start=start, end=end, color=color.hex)
                 return Response({}, status=status.HTTP_200_OK)
         except ValidationError:
             raise Exception()

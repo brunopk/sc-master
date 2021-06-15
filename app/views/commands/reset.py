@@ -25,8 +25,7 @@ class CmdReset(APIView):
     def patch(self, _):
         try:
             with transaction.atomic():
-                current_design = StaticDesign.objects.get(active=True)
-                current_design.delete()
+                StaticDesign.objects.filter(active=True).update(active=False)
                 scrpi_client.reset()
             return Response({}, status=status.HTTP_200_OK)
         except StaticDesign.DoesNotExist:
