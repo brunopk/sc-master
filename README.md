@@ -55,7 +55,6 @@ Before invoking any endpoint, **register an application** (entity or person whic
 
 > Remember the client id and the client secret (see [Testing the API](#Testing-the-API)).
 
-
 ## Creating new models
 
 1. Create a new module with the model class on `app/models/`.
@@ -80,7 +79,16 @@ To authenticate open the authorize dialog on  http://localhost:8000, and complet
 
 The user and password credentials are set when [creating django users](#Creating-Django-users).
 
-## Future improvements:
+## Editing the code
+
+Recommended IDEs:
+
+- Pycharm
+- VSCode
+
+For VSCode it's recommended to install "Python" and "Pylance" extensions and enabling linting. To enabling linting search for "Linting: Pycodestyle Enabled" configuration and check the "Whether to lint Python files using pycodestyle".
+
+## Future improvements
 
 - PostgreSQL or MongoDB (currently it's working with Sqlite).
 - Implement endpoint for token refreshing.
