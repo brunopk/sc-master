@@ -37,6 +37,8 @@ or
 virtualenv -m <path to the python interpreter> <path of the venv>
 ```
 
+In order for VSCode to autodetect virtual environment and use it for debugging, it is recommended to create it on a folder named `.direnv` within the workspace folder.
+
 ## Creating Django users
 
 ```python manage.py createsuperuser```
@@ -86,7 +88,7 @@ Recommended IDEs:
 - Pycharm
 - VSCode
 
-For VSCode it's recommended to install "Python" and "Pylance" extensions and enabling linting. To enabling linting search for "Linting: Pycodestyle Enabled" configuration and check the "Whether to lint Python files using pycodestyle".
+For VSCode it's recommended to install "Python" and "Pylance" extensions and enabling linting. To enabling linting search for "Linting: Pycodestyle Enabled" configuration and check the "Whether to lint Python files using pycodestyle". Also to enable typechecking on VSCode, set the configuration `python.analysis.typeCheckingMode` with "basic" or "strict".
 
 ## Future improvements
 
