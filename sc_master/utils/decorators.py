@@ -48,7 +48,7 @@ def catch_errors():
             # for instance when violating model attribute unique constraint
             except IntegrityError as ex:
                 try:
-                    logger.exception(traceback.format_exc())
+                    logger.exception(ex)
                     _status = map_error_code_to_http_status(ErrorCode.GE_CANNOT_CREATE_RESOURCE)
                     _error = ErrorSerializer({
                         'code': int(ErrorCode.GE_CANNOT_CREATE_RESOURCE),
@@ -62,9 +62,9 @@ def catch_errors():
                         'message': 'Internal error, see server logs.',
                     })
 
-            except ParseError:
+            except ParseError as ex:
                 try:
-                    logger.exception(traceback.format_exc())
+                    logger.exception(ex)
                     _status = map_error_code_to_http_status(ErrorCode.GE_PARSE_ERROR)
                     _error = ErrorSerializer({
                         'code': int(ErrorCode.GE_PARSE_ERROR),
@@ -80,7 +80,7 @@ def catch_errors():
 
             except Http404 as ex:
                 try:
-                    logger.exception(traceback.format_exc())
+                    logger.exception(ex)
                     _status = map_error_code_to_http_status(ErrorCode.RE_NOT_FOUND)
                     _error = ErrorSerializer({
                         'code': int(ErrorCode.RE_NOT_FOUND),
@@ -96,7 +96,7 @@ def catch_errors():
 
             except ObjectDoesNotExist as ex:
                 try:
-                    logger.exception(traceback.format_exc())
+                    logger.exception(ex)
                     _status = map_error_code_to_http_status(ErrorCode.RE_NOT_FOUND)
                     _error = ErrorSerializer({
                         'code': int(ErrorCode.RE_NOT_FOUND),
@@ -110,8 +110,8 @@ def catch_errors():
                         'message': 'Internal error, see server logs.',
                     })
 
-            except Exception:
-                logger.exception(traceback.format_exc())
+            except Exception as ex:
+                logger.exception(ex)
                 _status = status.HTTP_500_INTERNAL_SERVER_ERROR
                 _error = ErrorSerializer({
                     'code': int(ErrorCode.GE_INTERNAL),

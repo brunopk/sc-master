@@ -7,6 +7,10 @@ from sc_master.utils.errors import DeviceClientError
 class ScRpiClient:
     """
     Client for the https://github.com/brunopk/sc-rpi
+
+    Each method will provide an abstraction for each command, so for instance the `connect` method will invoke the 
+    `connect` command on sc-rpi and will return the specified response for this command.
+
     """
 
     ####################################################################################################################

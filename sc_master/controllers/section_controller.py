@@ -250,7 +250,7 @@ class SectionController:
         """
         Get all sections
         """
-        return cls._sections  # type: ignore
+        return self._sections  # type: ignore
 
     def update_device_list(self, devices: List[Device]):
         self._devices = devices

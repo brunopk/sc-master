@@ -1,5 +1,6 @@
+from typing import Optional
 from dataclasses import dataclass
-from sc_master.utils.scrpi_client import ScRpiClient
+from sc_master.utils.scrpi_client import ScRpiClient, DeviceClientError
 
 
 @dataclass
