@@ -61,6 +61,10 @@ class DeviceClientError(ApiError):
         self._client_error_message = client_error_message
         self._client_error_result = client_error_result
 
+    def is_device_on(self) -> bool:
+        # TODO: implementar 
+        pass
+    
     def get_error_code(self) -> ErrorCode:
         if self._command_name == 'connect':
             return ErrorCode.DE_ESTABLISHING_CONNECTION
