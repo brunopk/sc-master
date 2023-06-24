@@ -13,8 +13,8 @@ from sc_master.utils.scrpi_client import ScRpiClient
 #                                                   ERROR CLASSES                                                      #
 ########################################################################################################################
 
-# TODO: error messages should be determined in upper classes (for instance on serializers) using the error code from  the OperationResult object
-# TODO: remove this error classes 
+# TODO: remove this error classes
+
 
 class SystemDeviceAlreadyConnected(ApiError):
 
@@ -81,72 +81,55 @@ class DeviceInfo:
 
 
 @dataclass
-class OperationResultError:
+class DeviceControllerResult:
 
-    error_code: Optional[ErrorCode]
+    mode: HardwareMode
 
+    is_system_on: bool = False
 
-@dataclass
-class OperationResult:
+    device_info: Optional[DeviceInfo] = None
 
-    hardware_mode: HardwareMode
-
-    is_system_on: Optional[bool]
-
-    device: Optional[DeviceInfo]
-
-    static_design: Optional[List[Section]]
-
-    error: Optional[OperationResultError]
+    static_design: Optional[List[Section]] = None
 
 ########################################################################################################################
 #                                                    OTHER FUNCTIONS                                                   #
 ########################################################################################################################
 
 
-def map_device_info(device: Device) -> DeviceInfo:
+def get_device_info(device: Device) -> DeviceInfo:
+    """
+    Maps a `Device` instance to a `DeviceInfo` instance extracting some specific attributes and discarding the rest.
+    """
     return DeviceInfo(device.address, device.port, device.number_of_led, device.is_on)
+
+
+def validate_mode(cls, mode: HardwareMode) -> bool:
+    return mode is not None and cls._mode == mode
+
+
+def validate_device_connected(cls) -> bool:
+    return cls._device is not None
+
+
+def validate_system_on(cls) -> bool:
+    return cls._is_system_on
 
 
 ########################################################################################################################
 #                                                   DECORATORS                                                         #
 ########################################################################################################################
 
-def handle_device_client_errors():
+def validate(mode: Optional[HardwareMode] = None, device_connected: bool = False, system_on: bool = False):
 
     def decorator(func):
 
         @wraps(func)
-        def _wrapped_func(cls: DeviceController, *args, **kwargs):
-
-            #TODO: implement
-            pass
-
-        return _wrapped_func
-
-    return decorator
-
-
-def require(mode: Optional[HardwareMode] = None, connected_devices: bool = False, one_device_on: bool = False):
-
-    def decorator(func):
-
-        @wraps(func)
-        def _wrapped_func(cls: DeviceController, *args, **kwargs):
-            if mode is not None and validate_mode(cls, mode):
-                return OperationResult(
-                    cls._hardware_mode,
-                    cls._is_system_on,
-                    map_device_info(cls._device) if cls._device is not None else None,
-                    cls._section_controller.get_sections(),
-                    OperationResultError(ErrorCode.SY_MODE_ERROR))
-            elif connected_devices and not validate_connected_devices(cls):
-                # TODO: CONTINUE HERE (return an OperationResult similar as above)
-
-            # it don't make to much sense to filter on a list cause currently sc-master is intended to control one device
-
-            elif one_device_on and len(list(filter(lambda d: d.is_on, cls._devices))) == 0:  # type: ignore
-                raise SystemTurnedOff()
+        def _wrapped_func(cls, *args, **kwargs):
+            if mode is not None and not validate_mode(cls, mode) \
+                    or system_on and not validate_system_on(cls):
+                raise ApiError(ErrorCode.SY_MODE_ERROR)
+            elif device_connected and not validate_device_connected(cls):
+                raise ApiError(ErrorCode.SY_HAS_NO_CONNECTED_DEVICES)
             else:
                 return func(cls, *args, **kwargs)
 
@@ -155,28 +138,34 @@ def require(mode: Optional[HardwareMode] = None, connected_devices: bool = False
     return decorator
 
 
-def validate_mode(cls, mode: HardwareMode) -> bool:
-    return mode is not None and cls._mode != mode
+def handle_device_client_errors():
 
+    def decorator(func):
 
-def validate_connected_devices(cls) -> bool:
-    return cls._device is not None
+        @wraps(func)
+        def _wrapped_func(cls, *args, **kwargs):
+            try:
+                return func(cls, *args, **kwargs)
+            except DeviceClientError as e:
+                raise ApiError(e.get_error_code(), message=e.get_message())
+
+        return _wrapped_func
+
+    return decorator
 
 ########################################################################################################################
 #                                                     MAIN CLASS                                                       #
 ########################################################################################################################
 
+# TODO: SEGUIR PROBANDO EL METODO connect_device (probar reconectar device ya conectado) , luego seguir probando el turn_off, y add_sections (y toda el manejo de secciones). volver a probar turn_on (despues de hacer connect)
+# TODO: en sc-rpi lograr salida con colores ej: 2023-06-21 00:50:42,103 - root - WARNING -- Client disconnected abruptly (violeta)
+
 
 class DeviceController:
     """
-    Provides 'operations' to control devices, each method corresponding to a different operation. Currently sc-master, 
-    so that this controller is intended to manipulate only one device. It'is on the roadmap of the project to extend 
-    operations providing the ability to control more than one device.
-
-    All operations return objects of the same class: `OperationResult`, so despite redundant, it's preferable to add the 
-    `return cls._generate_successful_result()` at the end of any operation in order to make clear it also returns an 
-    `OperationResult` instance.
-
+    Provides a set of functions (static methods) to control a (only one) device. Each method can be thought as an 
+    operation on a device, for example turing all lights on or just turning an specific section of the whole strip. All 
+    operations return the same object (`DeviceControllerResult`).
     """
 
     ####################################################################################################################
@@ -197,65 +186,14 @@ class DeviceController:
     ####################################################################################################################
 
     @classmethod
-    def _generate_error_result(cls, error: Union[DeviceClientError, ApiError]) -> OperationResult:
+    def _generate_successful_result(cls) -> DeviceControllerResult:
         """
-        The main purpose of this method is to allow any method in this class to return the same object
-        (`OperationResult`) after throwing an exception. See also the description of the
-        `_generate_successful_result` and decorator `handle_errors`.
+        Returns an instance of `DeviceControllerResult` using information from class methods and class attributes.
         """
 
-        is_on = True
-        # TODO: en vez de hacer "cls._device is not None" hacer un handling de los posibles errores: SystemModeError, SystemHasNoConnectedDevices
-        if cls._device is not None:
-            # TODO: hacer un if para el caso de error (cuando el device is_on)
-            result_info = OperationResultInfo(mode=cls._mode, is_on=cls._device.is_on)
-        else:
-
-            result_info = OperationResultInfo(mode=cls._mode)
-
-
-        result = OperationResult(error_code=error.get_error_code(), info=result_info)
-        
-        """
-        if e1 is not Non
-            device_with_error = list(
-              filter(
-                lambda d: d.address == e1.get_device_address() and d.port == e1.get_device_port(),  # type: ignore
-                devices
-              )
-            )[0]
-            device_with_error.error = Error(str(e1.get_error_code()), e1.get_message())
-            is_error = True
-            http_status = map_error_code_to_http_status(e1.get_error_code())
-        if e2 is not None:
-            is_error = True
-            error = Error(str(e2.get_error_code()), e2.get_message())
-            http_status = map_error_code_to_http_status(e2.get_error_code())
-      
-        data = Data(
-          is_on=any(map(lambda d: d.is_on, cls._devices)),
-          is_error=is_error,
-          mode=str(cls._mode),
-          devices=devices,
-          error=error,
-          static_design=cls._section_controller.get_sections() if cls._mode == HardwareMode.STATIC else None
-        )
-        """
-        pass
-
-    @classmethod
-    def _generate_successful_result(cls) -> OperationResult:
-        """
-        Returns an `OperationResult` using information from class methods and class attributes.
-        """
-
-        device_with_error = None
-        is_error = False
-        error = None
-        http_status = status.HTTP_200_OK
-
-        # TODO: return an `OperationResult` with the corresponding data from DeviceController 
-        return OperationResult(http_status, Data(HardwareMode.STATIC, True, None, [], []))
+        device_info = get_device_info(cls._device) if cls._device is not None else None
+        static_design = cls._section_controller.get_sections()
+        return DeviceControllerResult(cls._hardware_mode, cls._is_system_on, device_info, static_design)
 
     ####################################################################################################################
     #                                                 PUBLIC STATIC METHODS                                            #
@@ -263,7 +201,7 @@ class DeviceController:
 
     @classmethod
     @handle_device_client_errors()
-    def connect_device(cls, address: str, port: int) -> OperationResult:
+    def connect_device(cls, address: str, port: int) -> DeviceControllerResult:
         """
         Establish a connection with a device
         """
@@ -281,46 +219,47 @@ class DeviceController:
 
     @classmethod
     @handle_device_client_errors()
-    def status(cls) -> OperationResult:
+    def status(cls) -> DeviceControllerResult:
         """
         Gets information of the system including each connected device (if any)
         """
-        if len(cls._devices) > 0:
-            cls._devices[0].client.status()
+        # TODO: capaz no sirve exponer lo que devuelve status, que sea algo interno nomas (ver https://github.com/brunopk/sc-rpi/blob/master/doc/commands.md#status)
+        if cls._device is not None:
+            cls._device.client.status()
         return cls._generate_successful_result()
 
     @classmethod
-    @require(connected_devices=True)
+    @validate(device_connected=True)
     @handle_device_client_errors()
-    def reset(cls) -> OperationResult:
+    def reset(cls) -> DeviceControllerResult:
         """
         Sets the system on STATIC and remove all sections (executing this operation will turn off all the strips).
         """
-        cls._devices[0].client.reset()
+        cls._device.client.reset()
         cls._mode = HardwareMode.STATIC
         cls._section_controller.remove_all_sections()
         return cls._generate_successful_result()
 
     @classmethod
-    @require(connected_devices=True)
+    @validate(device_connected=True)
     @handle_device_client_errors()
-    def turn_on(cls, index=None):
+    def turn_on(cls, section_index=None):
         """
-        If index is not None, turns on an specific section. Otherwise, turns on an specific section or all the strips.
+        Turns on an specific section or all the strips.
         """
-        if index is not None:
-            cls._devices[0].client.turn_on(cls._section_controller.get_section_hw_id(index))
-            cls._section_controller.set_section_on(index)
+        if section_index is not None:
+            cls._device.client.turn_on(cls._section_controller.get_section_hw_id(section_index))
+            cls._section_controller.set_section_on(section_index)
         else:
-            cls._devices[0].client.turn_on()
-            for d in cls._devices:
-                d.is_on = True
+            cls._device.client.turn_on()
+            cls._is_system_on = True
+
         return cls._generate_successful_result()
 
     @classmethod
-    @require(connected_devices=True)
+    @validate(device_connected=True)
     @handle_device_client_errors()
-    def turn_off(cls, index=None) -> OperationResult:
+    def turn_off(cls, index=None) -> DeviceControllerResult:
         """
         If index is not None, turns off an specific section. Otherwise, turns off all the strips
         and reset the system to the initial state (like reset method).
@@ -339,9 +278,9 @@ class DeviceController:
         return cls._generate_successful_result()
 
     @classmethod
-    @require(mode=HardwareMode.STATIC, one_device_on=True)
+    @validate(mode=HardwareMode.STATIC, system_on=True)
     @handle_device_client_errors()
-    def add_sections(cls, sections: List[Section]) -> OperationResult:
+    def add_sections(cls, sections: List[Section]) -> DeviceControllerResult:
         """
         Add a list of sections to the current static design.
 
@@ -356,9 +295,9 @@ class DeviceController:
         return cls._generate_successful_result()
 
     @classmethod
-    @require(mode=HardwareMode.STATIC, one_device_on=True)
+    @validate(mode=HardwareMode.STATIC, system_on=True)
     @handle_device_client_errors()
-    def remove_sections(cls, indexes: List[int]) -> OperationResult:
+    def remove_sections(cls, indexes: List[int]) -> DeviceControllerResult:
         """
         Remove one or more section
 
@@ -371,9 +310,9 @@ class DeviceController:
         return cls._generate_successful_result()
 
     @classmethod
-    @require(mode=HardwareMode.STATIC, one_device_on=True)
+    @validate(mode=HardwareMode.STATIC, system_on=True)
     @handle_device_client_errors()
-    def edit_section(cls, index: int, data: Section) -> OperationResult:
+    def edit_section(cls, index: int, data: Section) -> DeviceControllerResult:
         """
         Change attributes of one section (set data.attr as None to leave data.attr unchanged).
 

@@ -1,24 +1,13 @@
+from typing import Optional
 from sc_master.utils.enums import ErrorCode
 
 
 class ApiError(Exception):
 
-    def __init__(self, *args):
-        super().__init__(*args)
-
-    def get_message(self) -> str:
-        """
-        Get error message
-        :raise Exception: if message can't be obtained
-        """
-        raise Exception('Not implemented')
-
-    def get_error_code(self) -> ErrorCode:
-        """
-        Get error code
-        :raise Exception:  if code can't be obtained
-        """
-        raise Exception('Not implemented')
+    def __init__(self, code: ErrorCode, message: Optional[str] = None, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.code = code
+        self.message = message
 
     def __str__(self):
         return super().__str__()
@@ -42,7 +31,7 @@ class NotImplemented(Exception):
         return ErrorCode.GE_INTERNAL
 
 
-class DeviceClientError(ApiError):
+class DeviceClientError(Exception):
 
     def __init__(
             self,
@@ -61,10 +50,6 @@ class DeviceClientError(ApiError):
         self._client_error_message = client_error_message
         self._client_error_result = client_error_result
 
-    def is_device_on(self) -> bool:
-        # TODO: implementar 
-        pass
-    
     def get_error_code(self) -> ErrorCode:
         if self._command_name == 'connect':
             return ErrorCode.DE_ESTABLISHING_CONNECTION
@@ -80,7 +65,7 @@ class DeviceClientError(ApiError):
 
     def get_message(self) -> str:
         if self._command_name == 'connect':
-            return f'Cannot establish connection with {self._device_address}:{self._device_port}'
+            return f'Cannot establish connection with device on {self._device_address}:{self._device_port}'
         elif isinstance(self._captured_exception, BrokenPipeError):
             return f'BrokenPipeError when sending command to {self._device_address}:{self._device_port}'
         elif isinstance(self._captured_exception, ConnectionRefusedError):

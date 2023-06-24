@@ -1,4 +1,5 @@
-from rest_framework.serializers import Serializer, CharField, BooleanField, ValidationError, IntegerField
+from rest_framework.serializers import Serializer, Field, CharField, BooleanField, ValidationError, IntegerField
+from sc_master.utils.helpers import remove_none_entries
 from sc_master.utils.enums import HardwareMode
 
 
@@ -22,16 +23,6 @@ class Section(Serializer):
         super(Section, self).create(validated_data)
 
 
-class ResponseError(Serializer):
-
-    class Meta:
-        ref_none = None
-
-    code = CharField(required=True)
-
-    message = CharField(required=True)
-
-
 class Device(Serializer):
 
     class Meta:
@@ -43,8 +34,6 @@ class Device(Serializer):
 
     number_of_led = IntegerField(required=True)
 
-    error = ResponseError(required=False, allow_null=True)
-
     def update(self, instance, validated_data):
         super(Device, self).update(instance, validated_data)
 
@@ -52,45 +41,50 @@ class Device(Serializer):
         super(Device, self).create(validated_data)
 
 
+class Mode(Field):
+
+    class Meta:
+        ref_name = None
+
+    def to_internal_value(self, data: HardwareMode):
+        return data
+
+    def to_representation(self, instance):
+        return instance.name
+
+
 class Response(Serializer):
+    """
+    Usually DRF serializers are intended to serialize the user input (JSON) to a model that can be handled by the
+    framework and may end up in database. In this case, this class allows to serialize only dictionaries :
+
+    ```
+    Response(data=assdict(some_object))
+    ```
+
+    into another dictionary, say `output_dictionary`, whose values are Python primitive datatypes (or nested
+    dictionaries), in order for DRF to output JSON data. Note that values in `data` may be instances of any
+    class while values in `output_dictionary` will be Python primitive datatypes (or nested dicts).
+
+    This conversion is accomplished in `to_representation` method.
+    """
 
     class Meta:
         ref_name = 'CmdResponse'
 
-    is_error = BooleanField(required=True)
+    is_system_on = BooleanField(required=True)
 
-    is_on = BooleanField(required=True)
+    mode = Mode(allow_null=False)
 
-    mode = CharField(required=True)
+    device = Device(required=False, allow_null=True)
 
-    error = ResponseError(required=False, allow_null=True)
+    static_design = Section(required=False, many=True, allow_null=True)
 
-    devices = Device(required=False, many=True)
-
-    static_design = Section(required=False, many=True)
-
-    _modes = [value.name for value in HardwareMode]
-
-    # noinspection PyMethodMayBeStatic, PyProtectedMember
-    def validate_mode(self, value):
-        if value not in Response._modes:
-            raise ValidationError(f'mode must be one of this {Response._modes}')
-        return value
-
-    def validate(self, data):
-        fields = list(data.keys())
-        is_error = data.get('is_error')
-        is_device_error = any(map(lambda d: d.get('is_error'), data.get('devices')))
-        error = data.get('error')
-        if not is_device_error and (is_error and error is None):
-            raise ValidationError('error is not defined')
-        for field in fields:
-            if isinstance(data.get(field), list) and len(data.get(field)) == 0:
-                del data[field]
-        return data
-
-    def create(self, validated_data):
-        super(Response, self).create(validated_data)
-
-    def update(self, instance, validated_data):
-        super(Response, self).update(instance, validated_data)
+    def to_representation(self, instance):
+        """
+        Generate the `output_dictionary` (see class description).
+        `None` values will be removed from the final result
+        """
+        # TODO: si hardware mode no es static => remover la lista de static design (agregar esto al Gist para mejora a futuro cuando haya mas de un modo)
+        ord_dict_rep = super().to_representation(instance)
+        return remove_none_entries(ord_dict_rep)

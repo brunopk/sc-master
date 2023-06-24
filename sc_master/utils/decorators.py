@@ -32,16 +32,17 @@ def catch_errors():
 
             except ApiError as ex:
                 try:
-                    _status = map_error_code_to_http_status(ex.get_error_code())
-                    _error = ErrorSerializer({
-                        'code': int(ex.get_error_code()),
-                        'message': ex.get_message(),
-                    })
+                    _serializer_data = {'code': ex.code} if ex.message is None else {
+                        'code': ex.code,
+                        'message': ex.message
+                    }
+                    _status = map_error_code_to_http_status(ex.code)
+                    _error = ErrorSerializer(_serializer_data)
                 except Exception as ex:
                     logger.exception(ex)
                     _status = status.HTTP_500_INTERNAL_SERVER_ERROR
                     _error = ErrorSerializer({
-                        'code': int(ErrorCode.GE_INTERNAL),
+                        'code': ErrorCode.GE_INTERNAL,
                         'message': 'Internal error, see server logs.',
                     })
 
@@ -51,14 +52,14 @@ def catch_errors():
                     logger.exception(ex)
                     _status = map_error_code_to_http_status(ErrorCode.GE_CANNOT_CREATE_RESOURCE)
                     _error = ErrorSerializer({
-                        'code': int(ErrorCode.GE_CANNOT_CREATE_RESOURCE),
+                        'code': ErrorCode.GE_CANNOT_CREATE_RESOURCE,
                         'message': f'Cannot create resource {ex}.',
                     })
                 except Exception as ex:
                     logger.exception(ex)
                     _status = status.HTTP_500_INTERNAL_SERVER_ERROR
                     _error = ErrorSerializer({
-                        'code': int(ErrorCode.GE_INTERNAL),
+                        'code': ErrorCode.GE_INTERNAL,
                         'message': 'Internal error, see server logs.',
                     })
 
@@ -67,14 +68,14 @@ def catch_errors():
                     logger.exception(ex)
                     _status = map_error_code_to_http_status(ErrorCode.GE_PARSE_ERROR)
                     _error = ErrorSerializer({
-                        'code': int(ErrorCode.GE_PARSE_ERROR),
+                        'code': ErrorCode.GE_PARSE_ERROR,
                         'message': 'Cannot parse request.',
                     })
                 except Exception as ex:
                     logger.exception(ex)
                     _status = status.HTTP_500_INTERNAL_SERVER_ERROR
                     _error = ErrorSerializer({
-                        'code': int(ErrorCode.GE_INTERNAL),
+                        'code': ErrorCode.GE_INTERNAL,
                         'message': 'Internal error, see server logs.',
                     })
 
@@ -83,14 +84,14 @@ def catch_errors():
                     logger.exception(ex)
                     _status = map_error_code_to_http_status(ErrorCode.RE_NOT_FOUND)
                     _error = ErrorSerializer({
-                        'code': int(ErrorCode.RE_NOT_FOUND),
+                        'code': ErrorCode.RE_NOT_FOUND,
                         'message': f'Resource not found {ex}.',
                     })
                 except Exception as ex:
                     logger.exception(ex)
                     _status = status.HTTP_500_INTERNAL_SERVER_ERROR
                     _error = ErrorSerializer({
-                        'code': int(ErrorCode.GE_INTERNAL),
+                        'code': ErrorCode.GE_INTERNAL,
                         'message': 'Internal error, see server logs.',
                     })
 
@@ -98,15 +99,12 @@ def catch_errors():
                 try:
                     logger.exception(ex)
                     _status = map_error_code_to_http_status(ErrorCode.RE_NOT_FOUND)
-                    _error = ErrorSerializer({
-                        'code': int(ErrorCode.RE_NOT_FOUND),
-                        'message': str(ErrorCode.RE_NOT_FOUND),
-                    })
+                    _error = ErrorSerializer({'code': ErrorCode.RE_NOT_FOUND})
                 except Exception as ex:
                     logger.exception(ex)
                     _status = status.HTTP_500_INTERNAL_SERVER_ERROR
                     _error = ErrorSerializer({
-                        'code': int(ErrorCode.GE_INTERNAL),
+                        'code': ErrorCode.GE_INTERNAL,
                         'message': 'Internal error, see server logs.',
                     })
 
@@ -114,7 +112,7 @@ def catch_errors():
                 logger.exception(ex)
                 _status = status.HTTP_500_INTERNAL_SERVER_ERROR
                 _error = ErrorSerializer({
-                    'code': int(ErrorCode.GE_INTERNAL),
+                    'code': ErrorCode.GE_INTERNAL,
                     'message': 'Internal error, see server logs.',
                 })
 

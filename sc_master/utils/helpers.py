@@ -1,4 +1,4 @@
-from typing import Dict, List
+from typing import Dict, List, OrderedDict
 from rest_framework.serializers import ValidationError
 from rest_framework import status
 from webcolors import hex_to_rgb
@@ -36,6 +36,21 @@ def validate_hex(value: str):
         return value
     except ValueError:
         raise ValidationError('Invalid hex')
+
+
+def remove_none_entries(input: OrderedDict) -> OrderedDict:
+    """
+    Recursively generates a new dictionary removing entries in `input` whose values are `None`
+    """
+    output = OrderedDict()
+    for field in input.keys():
+        value = input.get(field)
+        if value is not None:
+            output.setdefault(field, value)
+        elif isinstance(value, OrderedDict):
+            output.setdefault(field, remove_none_entries(value))
+    return output
+            
 
 
 def dict_to_section(data: Dict) -> Section:
