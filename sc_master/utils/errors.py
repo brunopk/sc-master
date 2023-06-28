@@ -2,6 +2,8 @@ from typing import Optional
 from sc_master.utils.enums import ErrorCode
 
 
+#TODO: agregar la causa del error (por ejemplo cuando da un error al mandar comando a sc-rpi)
+
 class ApiError(Exception):
 
     def __init__(self, code: ErrorCode, message: Optional[str] = None, *args, **kwargs):
