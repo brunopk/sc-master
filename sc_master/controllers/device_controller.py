@@ -147,6 +147,7 @@ def handle_device_client_errors():
             try:
                 return func(cls, *args, **kwargs)
             except DeviceClientError as e:
+                #TODO: agregar la causa del error (por ejemplo cuando da un error al mandar comando a sc-rpi)
                 raise ApiError(e.get_error_code(), message=e.get_message())
 
         return _wrapped_func
@@ -157,8 +158,15 @@ def handle_device_client_errors():
 #                                                     MAIN CLASS                                                       #
 ########################################################################################################################
 
-# TODO: SEGUIR PROBANDO EL METODO connect_device (probar reconectar device ya conectado) , luego seguir probando el turn_off, y add_sections (y toda el manejo de secciones). volver a probar turn_on (despues de hacer connect)
-# TODO: en sc-rpi lograr salida con colores ej: 2023-06-21 00:50:42,103 - root - WARNING -- Client disconnected abruptly (violeta)
+# TODO: SEGUIR PROBANDO connect_device y turn_on
+# TODO: SEGUIR PROBANDO turn_on pero de 1 seccion
+# TODO: seguir probando el turn_off, y add_sections (y toda el manejo de secciones). volver a probar turn_on (despues de hacer connect)
+# TODO: agregar la info del device a la salida de todos los endpoints
+# TODO: identificar el device por un nombre (y que aparezca el nombre en todos lados)
+# TODO: ver que hace cuando se conecta un device (si prende o no, capaz conviene que haga un efecto o que sc-master le mande algo para que haga un efecto y se entienda que se conecto alguien)
+# TODO: sacar para que no mande el comando status enseguida despues que conecta
+# TODO: hacer que logue los errores cuando se hace dos veces turn_on y la segunda falla porque ya esta prendido
+# TODO: usar solo prefijos para cuando sean errores de device (por ejemplo GE_INTERNAL_ERROR -> INTERNAL_ERROR)
 
 
 class DeviceController:
@@ -203,16 +211,16 @@ class DeviceController:
     @handle_device_client_errors()
     def connect_device(cls, address: str, port: int) -> DeviceControllerResult:
         """
-        Establish a connection with a device
+        Establish connection between sc-master an the device
         """
 
-        if not cls._device is None:
-            raise SystemDeviceAlreadyConnected()
+        if cls._device is not None:
+            raise ApiError(ErrorCode.SY_DEVICE_ALREADY_CONNECTED)
 
         client = ScRpiClient()
         client.connect(address, port)
         status = client.status()
-        number_of_led = int(status.get('strip_length'))  # type: ignore
+        number_of_led = int(status.get('strip_length'))
         cls._device = Device(address, port, client, number_of_led)
 
         return cls._generate_successful_result()
