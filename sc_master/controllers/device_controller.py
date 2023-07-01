@@ -111,10 +111,6 @@ def validate_device_connected(cls) -> bool:
     return cls._device is not None
 
 
-def validate_system_on(cls) -> bool:
-    return cls._is_system_on
-
-
 ########################################################################################################################
 #                                                   DECORATORS                                                         #
 ########################################################################################################################
@@ -125,8 +121,7 @@ def validate(mode: Optional[HardwareMode] = None, device_connected: bool = False
 
         @wraps(func)
         def _wrapped_func(cls, *args, **kwargs):
-            if mode is not None and not validate_mode(cls, mode) \
-                    or system_on and not validate_system_on(cls):
+            if mode is not None and not validate_mode(cls, mode):
                 raise ApiError(ErrorCode.SY_MODE_ERROR)
             elif device_connected and not validate_device_connected(cls):
                 raise ApiError(ErrorCode.SY_HAS_NO_CONNECTED_DEVICES)
@@ -158,14 +153,13 @@ def handle_device_client_errors():
 #                                                     MAIN CLASS                                                       #
 ########################################################################################################################
 
-# TODO: SEGUIR PROBANDO connect_device y turn_on
 # TODO: SEGUIR PROBANDO turn_on pero de 1 seccion
 # TODO: seguir probando el turn_off, y add_sections (y toda el manejo de secciones). volver a probar turn_on (despues de hacer connect)
 # TODO: agregar la info del device a la salida de todos los endpoints
 # TODO: identificar el device por un nombre (y que aparezca el nombre en todos lados)
 # TODO: ver que hace cuando se conecta un device (si prende o no, capaz conviene que haga un efecto o que sc-master le mande algo para que haga un efecto y se entienda que se conecto alguien)
 # TODO: sacar para que no mande el comando status enseguida despues que conecta
-# TODO: hacer que logue los errores cuando se hace dos veces turn_on y la segunda falla porque ya esta prendido
+# TODO: hacer que logue los errores (DeviceClientError) cuando se hace dos veces turn_on y la segunda falla porque ya esta prendido
 # TODO: usar solo prefijos para cuando sean errores de device (por ejemplo GE_INTERNAL_ERROR -> INTERNAL_ERROR)
 
 
@@ -185,7 +179,7 @@ class DeviceController:
     # TODO: set it on True on turn_on (and off on turn off)
     _is_system_on = False
 
-    _hardware_mode = HardwareMode.STATIC
+    _mode = HardwareMode.STATIC
 
     _section_controller = SectionController()
 
@@ -201,7 +195,7 @@ class DeviceController:
 
         device_info = get_device_info(cls._device) if cls._device is not None else None
         static_design = cls._section_controller.get_sections()
-        return DeviceControllerResult(cls._hardware_mode, cls._is_system_on, device_info, static_design)
+        return DeviceControllerResult(cls._mode, cls._is_system_on, device_info, static_design)
 
     ####################################################################################################################
     #                                                 PUBLIC STATIC METHODS                                            #
@@ -286,7 +280,7 @@ class DeviceController:
         return cls._generate_successful_result()
 
     @classmethod
-    @validate(mode=HardwareMode.STATIC, system_on=True)
+    @validate(mode=HardwareMode.STATIC)
     @handle_device_client_errors()
     def add_sections(cls, sections: List[Section]) -> DeviceControllerResult:
         """

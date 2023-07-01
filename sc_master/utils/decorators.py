@@ -138,7 +138,7 @@ def validate_request(serializer_class):
                 return view_func(self, request, serialized_request, *args, **kwargs)
             else:
                 error = ErrorSerializer({
-                    'code': int(ErrorCode.GE_BAD_REQUEST),
+                    'code': ErrorCode.GE_BAD_REQUEST,
                     'message': str(serialized_request.errors)
                 })
                 return Response(error.data, status=status.HTTP_400_BAD_REQUEST)
