@@ -24,7 +24,7 @@ class TurnOn(APIView):
     )
     @catch_errors()
     def patch(self, _, index=None):
-        result = DeviceController.turn_on(index)
-        response = ResponseSerializer(data=asdict(result.data))
+        result = DeviceController.turn_on(int(index))
+        response = ResponseSerializer(data=asdict(result))
         response.is_valid(raise_exception=True)
-        return Response(response.data, status=result.http_status)
+        return Response(response.data, status=status.HTTP_200_OK)
