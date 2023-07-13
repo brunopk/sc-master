@@ -1,4 +1,4 @@
-from typing import List, Dict, Union, Optional
+from typing import List, Optional
 from dataclasses import dataclass
 from functools import wraps
 from rest_framework import status
@@ -132,28 +132,11 @@ def validate(mode: Optional[HardwareMode] = None, device_connected: bool = False
 
     return decorator
 
-
-def handle_device_client_errors():
-
-    def decorator(func):
-
-        @wraps(func)
-        def _wrapped_func(cls, *args, **kwargs):
-            try:
-                return func(cls, *args, **kwargs)
-            except DeviceClientError as e:
-                #TODO: agregar la causa del error (por ejemplo cuando da un error al mandar comando a sc-rpi)
-                raise ApiError(e.get_error_code(), message=e.get_message())
-
-        return _wrapped_func
-
-    return decorator
-
 ########################################################################################################################
 #                                                     MAIN CLASS                                                       #
 ########################################################################################################################
 
-# TODO: SEGUIR PROBANDO turn_on pero de 1 seccion
+# TODO: SEGUIR turn_off pero de 1 seccion
 # TODO: seguir probando el turn_off, y add_sections (y toda el manejo de secciones). volver a probar turn_on (despues de hacer connect)
 # TODO: agregar la info del device a la salida de todos los endpoints
 # TODO: identificar el device por un nombre (y que aparezca el nombre en todos lados)
@@ -161,6 +144,8 @@ def handle_device_client_errors():
 # TODO: sacar para que no mande el comando status enseguida despues que conecta
 # TODO: hacer que logue los errores (DeviceClientError) cuando se hace dos veces turn_on y la segunda falla porque ya esta prendido
 # TODO: usar solo prefijos para cuando sean errores de device (por ejemplo GE_INTERNAL_ERROR -> INTERNAL_ERROR)
+# TODO: cuando "is_system_on": false, no deberia mostrar "is_on": true en cada seccion
+# TODO: validar doble turn_on 
 
 
 class DeviceController:
@@ -181,6 +166,7 @@ class DeviceController:
 
     _mode = HardwareMode.STATIC
 
+    # TODO: consider moving this to an utils file with functions instead of a class
     _section_controller = SectionController()
 
     ####################################################################################################################
@@ -202,7 +188,6 @@ class DeviceController:
     ####################################################################################################################
 
     @classmethod
-    @handle_device_client_errors()
     def connect_device(cls, address: str, port: int) -> DeviceControllerResult:
         """
         Establish connection between sc-master an the device
@@ -220,7 +205,6 @@ class DeviceController:
         return cls._generate_successful_result()
 
     @classmethod
-    @handle_device_client_errors()
     def status(cls) -> DeviceControllerResult:
         """
         Gets information of the system including each connected device (if any)
@@ -232,7 +216,6 @@ class DeviceController:
 
     @classmethod
     @validate(device_connected=True)
-    @handle_device_client_errors()
     def reset(cls) -> DeviceControllerResult:
         """
         Sets the system on STATIC and remove all sections (executing this operation will turn off all the strips).
@@ -244,13 +227,16 @@ class DeviceController:
 
     @classmethod
     @validate(device_connected=True)
-    @handle_device_client_errors()
-    def turn_on(cls, section_index=None):
+    def turn_on(cls, section_index: Optional[int] = None):
         """
         Turns on an specific section or all the strips.
         """
         if section_index is not None:
-            cls._device.client.turn_on(cls._section_controller.get_section_hw_id(section_index))
+            if cls._section_controller.is_section_on(section_index):
+                raise ApiError(ErrorCode.ST_ALREADY_ON)        
+            section_id = cls._section_controller.get_section_hw_id(section_index)
+            # TODO: consider referencing sections just by index instead of an UUID (sc-rpi)
+            cls._device.client.turn_on(section_id)
             cls._section_controller.set_section_on(section_index)
         else:
             cls._device.client.turn_on()
@@ -260,7 +246,6 @@ class DeviceController:
 
     @classmethod
     @validate(device_connected=True)
-    @handle_device_client_errors()
     def turn_off(cls, index=None) -> DeviceControllerResult:
         """
         If index is not None, turns off an specific section. Otherwise, turns off all the strips
@@ -280,8 +265,7 @@ class DeviceController:
         return cls._generate_successful_result()
 
     @classmethod
-    @validate(mode=HardwareMode.STATIC)
-    @handle_device_client_errors()
+    @validate(device_connected=True, mode=HardwareMode.STATIC)
     def add_sections(cls, sections: List[Section]) -> DeviceControllerResult:
         """
         Add a list of sections to the current static design.
@@ -291,14 +275,13 @@ class DeviceController:
         cls._section_controller.validate_addition(sections)
         cls._section_controller.add_sections(sections)
         command_args = {'sections': [s.__dict__ for _, s in enumerate(sections)]}
-        command_resp = cls._devices[0].client.section_add(command_args)
-        for i, hw_id in enumerate(command_resp.get('sections')):  # type: ignore
+        command_resp = cls._device.client.section_add(command_args)
+        for i, hw_id in enumerate(command_resp.get('sections')):
             cls._section_controller.set_section_hw_id(sections[i].start, sections[i].end, hw_id)
         return cls._generate_successful_result()
 
     @classmethod
     @validate(mode=HardwareMode.STATIC, system_on=True)
-    @handle_device_client_errors()
     def remove_sections(cls, indexes: List[int]) -> DeviceControllerResult:
         """
         Remove one or more section
@@ -313,7 +296,6 @@ class DeviceController:
 
     @classmethod
     @validate(mode=HardwareMode.STATIC, system_on=True)
-    @handle_device_client_errors()
     def edit_section(cls, index: int, data: Section) -> DeviceControllerResult:
         """
         Change attributes of one section (set data.attr as None to leave data.attr unchanged).

@@ -50,15 +50,6 @@ def remove_none_entries(input: OrderedDict) -> OrderedDict:
         elif isinstance(value, OrderedDict):
             output.setdefault(field, remove_none_entries(value))
     return output
-            
-
-
-def dict_to_section(data: Dict) -> Section:
-    """
-    Generate a Section from a dictionary storing values in the corresponding attribute.
-    For instance, data["start"] will be copied to s.start (where s is an instance of Section).
-    """
-    return Section(data.get('start'), data.get('end'), data.get('color'), data.get('is_on'))
 
 
 def map_error_code_to_http_status(e: ErrorCode) -> int:
@@ -69,6 +60,7 @@ def map_error_code_to_http_status(e: ErrorCode) -> int:
 
     if \
             e == ErrorCode.ST_EDITION_NOT_ALLOWED \
+            or e == ErrorCode.ST_ALREADY_ON \
             or e == ErrorCode.SY_MODE_ERROR \
             or e == ErrorCode.GE_BAD_REQUEST \
             or e == ErrorCode.GE_PARSE_ERROR:
@@ -91,10 +83,3 @@ def map_error_code_to_http_status(e: ErrorCode) -> int:
         return status.HTTP_503_SERVICE_UNAVAILABLE
     else:
         raise Exception(f'No HTTP status defined for error #{int(e)}')
-
-
-def map_sections(data: List[Dict]) -> List[Section]:
-    """
-    Maps each element in the list using dict_to_section function
-    """
-    return list(map(lambda x: dict_to_section(x), data))

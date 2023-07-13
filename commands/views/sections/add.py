@@ -7,7 +7,7 @@ from dataclasses import asdict
 from sc_master.serializers.error import Error as ErrorSerializer
 from sc_master.controllers.device_controller import DeviceController
 from sc_master.utils.decorators import catch_errors, validate_request
-from sc_master.utils.helpers import map_sections
+from sc_master.utils.dataclasses import Section
 from commands.serializers.common.response import Response as ResponseSerializer
 from commands.serializers.sections.add import Add as AddSectionSerializer
 
@@ -32,7 +32,8 @@ class Add(APIView):
     @catch_errors()
     @validate_request(serializer_class=AddSectionSerializer)
     def put(self, _, serialized_request):
-        sections_to_add = serialized_request.data.get('sections')
+        sections_to_add = serialized_request.validated_data.get('sections')
+        sections_to_add = list(map(lambda s: Section(s.get('start'), s.get('end'), s.get('color'), True), sections_to_add))
         result = DeviceController.add_sections(sections_to_add)
         response = ResponseSerializer(data=asdict(result))
         response.is_valid(raise_exception=True)

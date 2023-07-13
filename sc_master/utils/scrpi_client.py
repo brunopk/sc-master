@@ -2,6 +2,7 @@ import socket as skt
 import json
 from typing import List, Optional
 from sc_master.utils.errors import DeviceClientError
+from sc_master.utils.errors import ErrorCode
 
 
 class ScRpiClient:
@@ -46,9 +47,9 @@ class ScRpiClient:
                 size = self._skt.send(msg)  # type: ignore
                 msg = msg[size:]
         except Exception as ex:
-            raise DeviceClientError(self._address, self._port, cmd['name'], ex)
+            raise DeviceClientError(ErrorCode.DE_SCP_CLIENT_ERROR, ex)
 
-    def _recv_response(self) -> dict:
+    def _recv_response(self, cmd: dict) -> dict:
         """
         Receive response
 
@@ -62,19 +63,13 @@ class ScRpiClient:
                 msg += chunk.decode('utf-8')
                 chunk = self._skt.recv(1)  # type: ignore
         except Exception as ex:
-            raise DeviceClientError(self._address, self._port, captured_exception=ex)
+            raise DeviceClientError(ErrorCode.DE_SCP_CLIENT_ERROR, ex, cmd)
 
         msg += str(chunk.decode('utf-8'))
         resp = json.loads(msg)
 
         if resp['status'] != self._SCP_OK:
-            raise DeviceClientError(
-                self._address,
-                self._port,
-                client_error_result=resp['result'],
-                client_error_message=resp['message'],
-                client_error_status=resp['status']
-            )
+            raise DeviceClientError(ErrorCode.DE_SCP_ERROR, resp, cmd)
 
         return resp['result']
 
@@ -99,7 +94,7 @@ class ScRpiClient:
         try:
             self._skt.connect((address, port))
         except Exception as ex:
-            raise DeviceClientError(self._address, self._port, command_name='connect', captured_exception=ex)
+            raise DeviceClientError(ErrorCode.DE_SCP_TCP_CONNECTION_ERROR, ex, address, port)
 
     def disconnect(self):
         """
@@ -118,7 +113,7 @@ class ScRpiClient:
         """
         cmd = {"name": "reset"}
         self._send_request(cmd)
-        return self._recv_response()
+        return self._recv_response(cmd)
 
     def status(self) -> dict:
         """
@@ -128,7 +123,7 @@ class ScRpiClient:
         """
         cmd = {"name": "status"}
         self._send_request(cmd)
-        return self._recv_response()
+        return self._recv_response(cmd)
 
     def turn_on(self, section_id: str = None) -> dict:
         """
@@ -142,7 +137,7 @@ class ScRpiClient:
                 'section_id': section_id
             }
         self._send_request(cmd)
-        return self._recv_response()
+        return self._recv_response(cmd)
 
     def turn_off(self, section_id: str = None) -> dict:
         """
@@ -156,7 +151,7 @@ class ScRpiClient:
                 'section_id': section_id
             }
         self._send_request(cmd)
-        return self._recv_response()
+        return self._recv_response(cmd)
 
     def section_edit(self, section_id: str, start: int = None, end: int = None, color: str = None) -> dict:
         """
@@ -179,7 +174,7 @@ class ScRpiClient:
         if color is not None:
             cmd['args']['color'] = color
         self._send_request(cmd)
-        return self._recv_response()
+        return self._recv_response(cmd)
 
     def section_add(self, args: dict) -> dict:
         """
@@ -194,7 +189,7 @@ class ScRpiClient:
             'args': args
         }
         self._send_request(cmd)
-        return self._recv_response()
+        return self._recv_response(cmd)
 
     def section_remove(self, sections: List[str]) -> dict:
         """
@@ -209,4 +204,4 @@ class ScRpiClient:
             }
         }
         self._send_request(cmd)
-        return self._recv_response()
+        return self._recv_response(cmd)

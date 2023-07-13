@@ -18,30 +18,6 @@ class SectionAux(Section):
 ########################################################################################################################
 
 
-class SectionOverlapping(ApiError):
-
-    def __init__(self, *args):
-        super().__init__(*args)
-
-    def get_message(self) -> str:
-        return 'Section overlapping.'
-
-    def get_error_code(self) -> ErrorCode:
-        return ErrorCode.ST_OVERLAPPING
-
-
-class SectionNotFound(ApiError):
-
-    def __init__(self, *args):
-        super().__init__(*args)
-
-    def get_message(self) -> str:
-        return 'Section not found.'
-
-    def get_error_code(self) -> ErrorCode:
-        return ErrorCode.ST_NOT_FOUND
-
-
 class SectionEditionNotAllowed(ApiError):
 
     def __init__(self, *args):
@@ -91,7 +67,7 @@ class SectionController:
                 if (l2[j].start <= l1[i].start <= l2[j].end) or \
                     (l2[j].start <= l1[i].end <= l2[j].end) or \
                         (l1[i].start < l2[j].start and l1[i].end > l2[j].end):
-                    raise SectionOverlapping()
+                    raise ApiError(ErrorCode.ST_OVERLAPPING)
                 elif l1[i].end < l2[j].start:
                     result.append(l1[i])
                     i += 1
@@ -125,7 +101,7 @@ class SectionController:
         :param sections: sections to add
         :raise SectionOverlapping: for section overlapping
         """
-        self._sections = self._sort_sections(self._sections + sections)  # type: ignore
+        self._sections = self._sort_sections(self._sections + sections)
 
     def edit_section(self, index: int, data: Section):
         """
@@ -154,14 +130,15 @@ class SectionController:
 
     def validate_addition(self, sections: List[Section]):
         """
-        Check some conditions :
+        Checks following conditions :
 
         1. Section overlapping
 
-        :param sections: sections to add
-        :raise SectionOverlapping: if rule 1 is violated
+        And raise the an exception in case of not passing any of them. 
+
+        :param sections: sections that will be added and needs to be validated
         """
-        cls._sort_sections(sections + cls._sections)  # type: ignore
+        self._sort_sections(sections + self._sections)  # type: ignore
 
     def validate_edition(self, index: int, data: Section):
         """
@@ -178,7 +155,7 @@ class SectionController:
         """
 
         if len(self._sections) == 0:
-            raise SectionNotFound()
+            raise ApiError(ErrorCode.ST_NOT_FOUND)
         if data.end >= self._devices[0].number_of_led:
             raise SectionEditionNotAllowed()
 
@@ -189,8 +166,8 @@ class SectionController:
             aux_list[index].is_on = data.is_on
             aux_list[index].color = data.color
         except IndexError:
-            raise SectionNotFound()
-        aux_list = cls._sort_sections(aux_list)  # type: ignore
+            raise ApiError(ErrorCode.ST_NOT_FOUND)
+        aux_list = self._sort_sections(aux_list)  # type: ignore
         section_after_edition = self._get_section_by_limits(aux_list, data.start, data.end)  # type: ignore
         if aux_list.index(section_after_edition) != index:
             raise SectionEditionNotAllowed()
@@ -203,18 +180,29 @@ class SectionController:
         """
         for index in indexes:
             if index < 0 or index >= len(self._sections):
-                raise SectionNotFound()
+                raise ApiError(ErrorCode.ST_NOT_FOUND)
+
+    def is_section_on(self, index: int) -> bool:
+        """
+        Indicates if section is on
+
+        Raise an exception if section not exist.
+        """
+        try:
+            return self._sections[index].is_on
+        except IndexError:
+            raise ApiError(ErrorCode.ST_NOT_FOUND)
 
     def set_section_on(self, index: int):
         """
         Set section on
 
-        :raise SectionNotFound:
+        Raise an exception if section not exist.
         """
         try:
             self._sections[index].is_on = True
         except IndexError:
-            raise SectionNotFound()
+            raise ApiError(ErrorCode.ST_NOT_FOUND)
 
     def set_section_off(self, index: int):
         """
@@ -225,7 +213,7 @@ class SectionController:
         try:
             self._sections[index].is_on = False
         except IndexError:
-            raise SectionNotFound()
+            raise ApiError(ErrorCode.ST_NOT_FOUND)
 
     def set_section_hw_id(self, start: int, end: int, hw_id: str):
         """
@@ -236,15 +224,15 @@ class SectionController:
 
     def get_section_hw_id(self, index: int) -> str:
         """
-        Find section by index and returns its hw_id
+        Find section by index and returns its hw_id.
 
-        :raise SectionNotFound:
+        Raise an exception if section not exist.
         """
         try:
             s = self._sections[index]
             return s.hw_id
         except IndexError:
-            raise SectionNotFound()
+            raise ApiError(ErrorCode.ST_NOT_FOUND)
 
     def get_sections(self) -> List[Section]:
         """
