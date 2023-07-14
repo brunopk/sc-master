@@ -4,7 +4,7 @@ from functools import wraps
 from rest_framework import status
 from sc_master.controllers.section_controller import SectionController
 from sc_master.utils.dataclasses import Section, Device
-from sc_master.utils.errors import ApiError, DeviceClientError
+from sc_master.utils.errors import ApiError
 from sc_master.utils.enums import ErrorCode, HardwareMode
 from sc_master.utils.scrpi_client import ScRpiClient
 
