@@ -2,7 +2,6 @@
 
 Provides a backend as a REST API for [sc-web](https://github.com/brunopk/sc-web). It's built on [Django Rest Framework](https://django-rest-framework.org) for Python 3.8.
 
-
 ## Starting the API
 
 1. Create a virtual environment (if wasn't done before).
