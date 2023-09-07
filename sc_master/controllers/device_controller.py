@@ -137,7 +137,7 @@ def validate(mode: Optional[HardwareMode] = None, device_connected: bool = False
 ########################################################################################################################
 
 # TODO: SEGUIR turn_off pero de 1 seccion
-# TODO: seguir probando el turn_off, y add_sections (y toda el manejo de secciones). volver a probar turn_on (despues de hacer connect)
+# TODO: SEGUIR probando el turn_off, y add_sections. volver a probar turn_on (despues de hacer connect)
 # TODO: agregar la info del device a la salida de todos los endpoints
 # TODO: identificar el device por un nombre (y que aparezca el nombre en todos lados)
 # TODO: ver que hace cuando se conecta un device (si prende o no, capaz conviene que haga un efecto o que sc-master le mande algo para que haga un efecto y se entienda que se conecto alguien)
@@ -145,7 +145,10 @@ def validate(mode: Optional[HardwareMode] = None, device_connected: bool = False
 # TODO: hacer que logue los errores (DeviceClientError) cuando se hace dos veces turn_on y la segunda falla porque ya esta prendido
 # TODO: usar solo prefijos para cuando sean errores de device (por ejemplo GE_INTERNAL_ERROR -> INTERNAL_ERROR)
 # TODO: cuando "is_system_on": false, no deberia mostrar "is_on": true en cada seccion
-# TODO: validar doble turn_on 
+# TODO: validar doble turn_on
+# TODO: seguir con el edit de secciones 
+# TODO: do the same changes in https://github.com/brunopk/sc-master/pull/15/files#diff-d9df4f0f4d960efe93e5b9e9d003753f112fc5cd9d1a59b2ef5c483fd066a67f for all commands
+
 
 
 class DeviceController:
