@@ -136,7 +136,6 @@ def validate(mode: Optional[HardwareMode] = None, device_connected: bool = False
 #                                                     MAIN CLASS                                                       #
 ########################################################################################################################
 
-# TODO: SEGUIR turn_off pero de 1 seccion
 # TODO: SEGUIR probando el turn_off, y add_sections. volver a probar turn_on (despues de hacer connect)
 # TODO: agregar la info del device a la salida de todos los endpoints
 # TODO: identificar el device por un nombre (y que aparezca el nombre en todos lados)
@@ -148,8 +147,10 @@ def validate(mode: Optional[HardwareMode] = None, device_connected: bool = False
 # TODO: validar doble turn_on
 # TODO: seguir con el edit de secciones 
 # TODO: do the same changes in https://github.com/brunopk/sc-master/pull/15/files#diff-d9df4f0f4d960efe93e5b9e9d003753f112fc5cd9d1a59b2ef5c483fd066a67f for all commands
-
-
+# TODO: estaría bueno que en los datos del device se muestre el puerto origen para poder matchearlo con lo que muestra sc-rpi
+# TODO: averiguar si esta bien retornar 503 cuando no hay un device conectado
+# TODO: hacer test unitarios
+# TODO: se podría hacer un wrapper del logger para que en sc_master/utils/decorators.py se configure solo para logear errores que no sean 400
 
 class DeviceController:
     """
@@ -236,12 +237,15 @@ class DeviceController:
         """
         if section_index is not None:
             if cls._section_controller.is_section_on(section_index):
-                raise ApiError(ErrorCode.ST_ALREADY_ON)        
+                raise ApiError(ErrorCode.SECTION_ALREADY_ON)
+
             section_id = cls._section_controller.get_section_hw_id(section_index)
-            # TODO: consider referencing sections just by index instead of an UUID (sc-rpi)
             cls._device.client.turn_on(section_id)
             cls._section_controller.set_section_on(section_index)
         else:
+            if not cls._device.is_on: 
+                raise ApiError(ErrorCode.LIGHTS_ALREADY_OFF)
+
             cls._device.client.turn_on()
             cls._is_system_on = True
 
@@ -249,22 +253,26 @@ class DeviceController:
 
     @classmethod
     @validate(device_connected=True)
-    def turn_off(cls, index=None) -> DeviceControllerResult:
+    def turn_off(cls, section_index: Optional[int] = None) -> DeviceControllerResult:
         """
         If index is not None, turns off an specific section. Otherwise, turns off all the strips
         and reset the system to the initial state (like reset method).
         """
 
-        if index is not None:
-            cls._devices[0].client.turn_off(cls._section_controller.get_section_hw_id(index))
-            cls._section_controller.set_section_on(index)
+        if section_index is not None:
+            if not cls._section_controller.is_section_on(section_index):
+                raise ApiError(ErrorCode.SECTION_ALREADY_OFF)
+
+            section_id = cls._section_controller.get_section_hw_id(section_index)
+            cls._device.client.turn_off(section_id)
+            cls._section_controller.set_section_off(section_index)
         else:
-            cls._devices[0].client.reset()
-            cls._devices[0].client.turn_off()
-            cls._section_controller.remove_all_sections()
-            for d in cls._devices:
-                d.is_on = False
-        cls._mode = HardwareMode.STATIC
+            if not cls._device.is_on: 
+                raise ApiError(ErrorCode.LIGHTS_ALREADY_OFF)
+
+            cls._device.client.turn_off()
+            cls._is_system_on = False
+
         return cls._generate_successful_result()
 
     @classmethod

@@ -60,7 +60,6 @@ def map_error_code_to_http_status(e: ErrorCode) -> int:
 
     if \
             e == ErrorCode.ST_EDITION_NOT_ALLOWED \
-            or e == ErrorCode.ST_ALREADY_ON \
             or e == ErrorCode.SY_MODE_ERROR \
             or e == ErrorCode.GE_BAD_REQUEST \
             or e == ErrorCode.GE_PARSE_ERROR:
@@ -70,6 +69,8 @@ def map_error_code_to_http_status(e: ErrorCode) -> int:
         return status.HTTP_404_NOT_FOUND
     elif \
             e == ErrorCode.ST_OVERLAPPING \
+            or e == ErrorCode.SECTION_ALREADY_ON \
+            or e == ErrorCode.SECTION_ALREADY_OFF \
             or e == ErrorCode.SY_DEVICE_ALREADY_CONNECTED \
             or e == ErrorCode.SY_TURNED_OFF:
         return status.HTTP_409_CONFLICT

@@ -6,6 +6,7 @@ from rest_framework import status
 from dataclasses import asdict
 from sc_master.controllers.device_controller import DeviceController
 from sc_master.utils.decorators import catch_errors
+from sc_master.serializers.error import Error as ErrorSerializer
 from commands.serializers.common.response import Response as ResponseSerializer
 
 
@@ -19,14 +20,16 @@ class TurnOff(APIView):
     @swagger_auto_schema(
         responses={
             status.HTTP_200_OK: ResponseSerializer(),
-            status.HTTP_404_NOT_FOUND: ResponseSerializer(),
-            status.HTTP_500_INTERNAL_SERVER_ERROR: ResponseSerializer(),
-            status.HTTP_503_SERVICE_UNAVAILABLE: ResponseSerializer(),
-        }
+            status.HTTP_409_CONFLICT: ErrorSerializer(),
+            status.HTTP_400_BAD_REQUEST: ErrorSerializer(),
+            status.HTTP_404_NOT_FOUND: ErrorSerializer(),
+            status.HTTP_500_INTERNAL_SERVER_ERROR: ErrorSerializer,
+            status.HTTP_503_SERVICE_UNAVAILABLE: ErrorSerializer()
+        },
     )
     @catch_errors()
     def patch(self, _, index=None):
-        result = DeviceController.turn_on(index)
+        result = DeviceController.turn_off(int(index))
         response = ResponseSerializer(data=asdict(result))
         response.is_valid(raise_exception=True)
-        return Response(response.data, status=result.http_status)
+        return Response(response.data, status=status.HTTP_200_OK)
