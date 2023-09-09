@@ -5,8 +5,6 @@ from sc_master.utils.errors import DeviceClientError
 from sc_master.utils.errors import ErrorCode
 
 
-# TODO: SEGUIR VER PORQUE RETORNA { "code": "SCP_ERROR", "message": "Device returned {'status': 500, 'message': 'Internal Server Error', 'result': {'error': 'Internal server error'}} for command {'name': 'turn_on'}"} en vez de device alreadyconnected cuando se hace 2 veces turn on
-
 class ScRpiClient:
     """
     Client for the https://github.com/brunopk/sc-rpi
@@ -51,9 +49,9 @@ class ScRpiClient:
         except Exception as ex:
             raise DeviceClientError(ErrorCode.SCP_TCP_ERROR_SENDING_REQUEST, ex, cmd)
 
-    def _recv_response(self, cmd: dict) -> dict:
+    def _recv_response(self, cmd: dict) -> Optional[dict]:
         """
-        Receive response
+        Receive response.
 
         :raises DeviceClientError:
         """
@@ -73,7 +71,8 @@ class ScRpiClient:
         if resp['status'] != self._SCP_OK:
             raise DeviceClientError(ErrorCode.SCP_ERROR, scp_command=cmd, scp_error=resp)
 
-        return resp['result']
+        if 'result' in resp:
+            return resp['result']
 
     def _stringify_command(self, cmd: dict):
         return json.dumps(cmd) + self._END_CHAR
