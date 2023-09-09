@@ -69,6 +69,9 @@ def map_error_code_to_http_status(e: ErrorCode) -> int:
         return status.HTTP_404_NOT_FOUND
     elif \
             e == ErrorCode.ST_OVERLAPPING \
+            or e == ErrorCode.LIGHTS_ALREADY_ON \
+            or e == ErrorCode.LIGHTS_ALREADY_OFF \
+            or e == ErrorCode.SECTION_ALREADY_OFF \
             or e == ErrorCode.SECTION_ALREADY_ON \
             or e == ErrorCode.SECTION_ALREADY_OFF \
             or e == ErrorCode.SY_DEVICE_ALREADY_CONNECTED \
