@@ -78,7 +78,7 @@ def map_error_code_to_http_status(e: ErrorCode) -> int:
             or e == ErrorCode.SY_TURNED_OFF:
         return status.HTTP_409_CONFLICT
     elif \
-            e == ErrorCode.GE_INTERNAL \
+            e == ErrorCode.INTERNAL_SERVER_ERROR \
             or e == ErrorCode.SCP_ERROR \
             or e == ErrorCode.SCP_TCP_CONNECTION_ERROR \
             or e == ErrorCode.SCP_TCP_ERROR_SENDING_REQUEST \

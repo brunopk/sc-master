@@ -31,7 +31,7 @@ class ErrorCode(Enum):
 
     RE_NOT_FOUND = 401
 
-    GE_INTERNAL = 1
+    INTERNAL_SERVER_ERROR = 1
     GE_CANNOT_CREATE_RESOURCE = 2
     GE_PARSE_ERROR = 3
     GE_BAD_REQUEST = 4

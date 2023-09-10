@@ -147,7 +147,7 @@ def catch_errors():
                         logger.warn(f'Cannot obtain serializer but HTTP status is {_status}, returning generic error')
                         _status = status.HTTP_500_INTERNAL_SERVER_ERROR
                         _error = ErrorSerializer({
-                            'code': ErrorCode.GE_INTERNAL,
+                            'code': ErrorCode.INTERNAL_SERVER_ERROR,
                             'message': 'Internal error, see server logs.',
                         })
                         return Response(_error.data, status=_status)
@@ -156,7 +156,7 @@ def catch_errors():
                         logger.warn(f'Returning generic error')
                         _status = status.HTTP_500_INTERNAL_SERVER_ERROR
                         _error = ErrorSerializer({
-                            'code': ErrorCode.GE_INTERNAL,
+                            'code': ErrorCode.INTERNAL_SERVER_ERROR,
                             'message': 'Internal error, see server logs.',
                         })
                         return Response(_error.data, status=_status)
