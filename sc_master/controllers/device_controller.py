@@ -152,7 +152,7 @@ def validate(mode: Optional[HardwareMode] = None, device_connected: bool = False
 # TODO: hacer test unitarios
 # TODO: se podría hacer un wrapper del logger para que en sc_master/utils/decorators.py se configure solo para logear errores que no sean 400
 # TODO: hacer que el turn off apague todas las secciones
-
+# TODO: retornar cantidad de leds en la response
 
 class DeviceController:
     """
