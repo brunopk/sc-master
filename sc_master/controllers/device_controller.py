@@ -37,7 +37,7 @@ class SystemHasNoConnectedDevices(ApiError):
         return 'Connect at least one device.'
 
     def get_error_code(self) -> ErrorCode:
-        return ErrorCode.SY_HAS_NO_CONNECTED_DEVICES
+        return ErrorCode.NO_CONNECTED_DEVICES
 
 
 class SystemTurnedOff(ApiError):
@@ -124,7 +124,7 @@ def validate(mode: Optional[HardwareMode] = None, device_connected: bool = False
             if mode is not None and not validate_mode(cls, mode):
                 raise ApiError(ErrorCode.SY_MODE_ERROR)
             elif device_connected and not validate_device_connected(cls):
-                raise ApiError(ErrorCode.SY_HAS_NO_CONNECTED_DEVICES)
+                raise ApiError(ErrorCode.NO_CONNECTED_DEVICES)
             else:
                 return func(cls, *args, **kwargs)
 

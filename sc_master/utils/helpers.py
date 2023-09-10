@@ -15,16 +15,17 @@ def validate_section_limits(limits: Dict):
     :return: the same dict passed to this function
     """
 
-    start: int = limits.get('start')
-    end: int = limits.get('end')
+    start = limits.get('start')
+    end = limits.get('end')
 
-    if start == end:
-        raise ValidationError('start and end must be different')
+    if start is not None and end is not None:
+        if start == end:
+            raise ValidationError('start and end must be different')
 
-    if start > end:
-        raise ValidationError('start cannot be larger than end')
+        if start > end:
+            raise ValidationError('start cannot be larger than end')
 
-    if start < 0 or end < 0:
+    if (start is not None and start < 0) or (end is not None and end < 0):
         raise ValidationError('start and end must be positive integers')
 
     return limits
@@ -65,7 +66,7 @@ def map_error_code_to_http_status(e: ErrorCode) -> int:
             or e == ErrorCode.GE_PARSE_ERROR:
         return status.HTTP_400_BAD_REQUEST
     elif \
-            e == ErrorCode.ST_NOT_FOUND or e == ErrorCode.RE_NOT_FOUND:
+            e == ErrorCode.SECTION_NOT_FOUND or e == ErrorCode.RE_NOT_FOUND:
         return status.HTTP_404_NOT_FOUND
     elif \
             e == ErrorCode.ST_OVERLAPPING \
@@ -85,7 +86,7 @@ def map_error_code_to_http_status(e: ErrorCode) -> int:
             or e == ErrorCode.SCP_TCP_ERROR_RECEIVING_RESPONSE:
         return status.HTTP_500_INTERNAL_SERVER_ERROR
     elif \
-            e == ErrorCode.SY_HAS_NO_CONNECTED_DEVICES:
+            e == ErrorCode.NO_CONNECTED_DEVICES:
         return status.HTTP_503_SERVICE_UNAVAILABLE
     else:
         raise Exception(f'No HTTP status defined for error #{int(e)}')
