@@ -155,7 +155,7 @@ class SectionController:
         """
 
         if len(self._sections) == 0:
-            raise ApiError(ErrorCode.ST_NOT_FOUND)
+            raise ApiError(ErrorCode.SECTION_NOT_FOUND)
         if data.end >= self._devices[0].number_of_led:
             raise SectionEditionNotAllowed()
 
@@ -166,7 +166,7 @@ class SectionController:
             aux_list[index].is_on = data.is_on
             aux_list[index].color = data.color
         except IndexError:
-            raise ApiError(ErrorCode.ST_NOT_FOUND)
+            raise ApiError(ErrorCode.SECTION_NOT_FOUND)
         aux_list = self._sort_sections(aux_list)  # type: ignore
         section_after_edition = self._get_section_by_limits(aux_list, data.start, data.end)  # type: ignore
         if aux_list.index(section_after_edition) != index:
@@ -180,7 +180,7 @@ class SectionController:
         """
         for index in indexes:
             if index < 0 or index >= len(self._sections):
-                raise ApiError(ErrorCode.ST_NOT_FOUND)
+                raise ApiError(ErrorCode.SECTION_NOT_FOUND)
 
     def is_section_on(self, index: int) -> bool:
         """
@@ -191,7 +191,7 @@ class SectionController:
         try:
             return self._sections[index].is_on
         except IndexError:
-            raise ApiError(ErrorCode.ST_NOT_FOUND)
+            raise ApiError(ErrorCode.SECTION_NOT_FOUND)
 
     def set_section_on(self, index: int):
         """
@@ -202,7 +202,7 @@ class SectionController:
         try:
             self._sections[index].is_on = True
         except IndexError:
-            raise ApiError(ErrorCode.ST_NOT_FOUND)
+            raise ApiError(ErrorCode.SECTION_NOT_FOUND)
 
     def set_section_off(self, index: int):
         """
@@ -213,7 +213,7 @@ class SectionController:
         try:
             self._sections[index].is_on = False
         except IndexError:
-            raise ApiError(ErrorCode.ST_NOT_FOUND)
+            raise ApiError(ErrorCode.SECTION_NOT_FOUND)
 
     def set_section_hw_id(self, start: int, end: int, hw_id: str):
         """
@@ -232,13 +232,13 @@ class SectionController:
             s = self._sections[index]
             return s.hw_id
         except IndexError:
-            raise ApiError(ErrorCode.ST_NOT_FOUND)
+            raise ApiError(ErrorCode.SECTION_NOT_FOUND)
 
     def get_sections(self) -> List[Section]:
         """
         Get all sections
         """
-        return self._sections  # type: ignore
+        return self._sections
 
     def update_device_list(self, devices: List[Device]):
         self._devices = devices

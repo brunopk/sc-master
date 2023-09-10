@@ -28,7 +28,7 @@ class NotImplemented(Exception):
         """
         Get error code
         """
-        return ErrorCode.GE_INTERNAL
+        return ErrorCode.INTERNAL_SERVER_ERROR
 
 
 # TODO: instead of Dict[str, Any] define a dataclass for scp errors
@@ -45,7 +45,7 @@ class DeviceClientError(ApiError):
             **kwargs):
 
         super().__init__(
-            code if code is not None else ErrorCode.GE_INTERNAL,
+            code if code is not None else ErrorCode.INTERNAL_SERVER_ERROR,
             self._get_message(code, exception, scp_command, scp_error),
             *args,
             **kwargs)
