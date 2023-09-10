@@ -151,6 +151,8 @@ def validate(mode: Optional[HardwareMode] = None, device_connected: bool = False
 # TODO: averiguar si esta bien retornar 503 cuando no hay un device conectado
 # TODO: hacer test unitarios
 # TODO: se podría hacer un wrapper del logger para que en sc_master/utils/decorators.py se configure solo para logear errores que no sean 400
+# TODO: hacer que el turn off apague todas las secciones
+
 
 class DeviceController:
     """
