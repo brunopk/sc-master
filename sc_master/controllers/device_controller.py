@@ -243,8 +243,8 @@ class DeviceController:
             cls._device.client.turn_on(section_id)
             cls._section_controller.set_section_on(section_index)
         else:
-            if not cls._device.is_on: 
-                raise ApiError(ErrorCode.LIGHTS_ALREADY_OFF)
+            if cls._device.is_on: 
+                raise ApiError(ErrorCode.LIGHTS_ALREADY_ON)
 
             cls._device.client.turn_on()
             cls._is_system_on = True
