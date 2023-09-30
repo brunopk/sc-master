@@ -129,21 +129,22 @@ class SectionController:
         Check some conditions :
 
         1. Section overlapping (after edition)
-        2. index must point to a valid array position
-        3. index cannot change after edition
-        4. data.end < length of the strip
+        2. Index must point to a valid section
+        3. Order of section must not change after edition
+        4. data.end < length of the strip (data.end is set)
+        5. data.start > 0 (data.start is set)
 
-        :raise SectionOverlapping: if rule 1 is violated
-        :raise SectionNotFound: if rule 2 is violated
-        :raise SectionEditionNotAllowed: if rule 3 is violated
+        Raise `ApiException` in case of not meeting conditions.
         """
 
         if len(self._sections) == 0:
             raise ApiError(ErrorCode.SECTION_NOT_FOUND)
-        
-        # TODO: FIX DEVICE NONE
-        if data.end >= self._device.number_of_led:
-            raise ApiError(ErrorCode.SECTION_EDITION_NOT_ALLOWED)
+
+        if data.start is not None and data.start < 0:
+            raise ApiError(ErrorCode.BAD_REQUEST, '"start" must be greater or equal to 0')
+
+        if data.end is not None and data.end >= self._device.number_of_led:
+            raise ApiError(ErrorCode.BAD_REQUEST, '"end" must be lower than number of led')
 
         aux_list = self._copy_section_list(self._sections)
         try:

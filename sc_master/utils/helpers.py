@@ -62,7 +62,7 @@ def map_error_code_to_http_status(e: ErrorCode) -> int:
     if \
             e == ErrorCode.SECTION_EDITION_NOT_ALLOWED \
             or e == ErrorCode.SY_MODE_ERROR \
-            or e == ErrorCode.GE_BAD_REQUEST \
+            or e == ErrorCode.BAD_REQUEST \
             or e == ErrorCode.GE_PARSE_ERROR:
         return status.HTTP_400_BAD_REQUEST
     elif \

@@ -136,8 +136,11 @@ def validate(mode: Optional[HardwareMode] = None, device_connected: bool = False
 #                                                     MAIN CLASS                                                       #
 ########################################################################################################################
 
-# TODO: SEGUIR probando el turn_off, y add_sections. volver a probar turn_on (despues de hacer connect)
-# TODO: SEGUIR validar que para agregar secciones tiene que estar todo prendido y las secciones que se agreguen prendidas (is_on true)
+# TODO: 1 CONTINUE TESTING EDIT COMMAND
+# TODO: 2 SEGUIR probando el turn_off, y add_sections. volver a probar turn_on (despues de hacer connect)
+# TODO: 3 SEGUIR validar que para agregar secciones tiene que estar todo prendido y las secciones que se agreguen prendidas (is_on true)
+# TODO: 4 HACER que el turn off apague todas las secciones
+# TODO: 5 add section with is_on = True just after creating (adding) it
 # TODO: agregar la info del device a la salida de todos los endpoints
 # TODO: identificar el device por un nombre (y que aparezca el nombre en todos lados)
 # TODO: ver que hace cuando se conecta un device (si prende o no, capaz conviene que haga un efecto o que sc-master le mande algo para que haga un efecto y se entienda que se conecto alguien)
@@ -146,13 +149,11 @@ def validate(mode: Optional[HardwareMode] = None, device_connected: bool = False
 # TODO: usar solo prefijos para cuando sean errores de device (por ejemplo GE_INTERNAL_ERROR -> INTERNAL_ERROR)
 # TODO: cuando "is_system_on": false, no deberia mostrar "is_on": true en cada seccion
 # TODO: validar doble turn_on
-# TODO: seguir con el edit de secciones 
 # TODO: do the same changes in https://github.com/brunopk/sc-master/pull/15/files#diff-d9df4f0f4d960efe93e5b9e9d003753f112fc5cd9d1a59b2ef5c483fd066a67f for all commands
 # TODO: estaría bueno que en los datos del device se muestre el puerto origen para poder matchearlo con lo que muestra sc-rpi
 # TODO: averiguar si esta bien retornar 503 cuando no hay un device conectado
 # TODO: hacer test unitarios
 # TODO: se podría hacer un wrapper del logger para que en sc_master/utils/decorators.py se configure solo para logear errores que no sean 400
-# TODO: hacer que el turn off apague todas las secciones
 # TODO: retornar cantidad de leds en la response
 
 
@@ -208,7 +209,9 @@ class DeviceController:
         client.connect(address, port)
         status = client.status()
         number_of_led = int(status.get('strip_length'))
-        cls._device = Device(address, port, client, number_of_led)
+        new_device = Device(address, port, client, number_of_led)
+        cls._device = new_device
+        cls._section_controller.set_connected_device(new_device)
 
         return cls._generate_successful_result()
 

@@ -7,6 +7,7 @@ from dataclasses import asdict
 from sc_master.controllers.device_controller import DeviceController
 from sc_master.serializers.error import Error as ErrorSerializer
 from sc_master.utils.decorators import catch_errors, validate_request
+from sc_master.utils.dataclasses import Section
 from commands.serializers.sections.edit import Edit as EditSectionSerializer
 from commands.serializers.common.response import Response as ResponseSerializer
 
@@ -31,7 +32,12 @@ class Edit(APIView):
     @catch_errors()
     @validate_request(serializer_class=EditSectionSerializer)
     def patch(self, _, serialized_request, index):
-        result = DeviceController.edit_section(index, serialized_request.data)
+        edited_section = Section(
+            serialized_request.data.get('start'),
+            serialized_request.data.get('end'),
+            serialized_request.data.get('color'),
+            None)
+        result = DeviceController.edit_section(index, edited_section)
         response = ResponseSerializer(data=asdict(result))
         response.is_valid(raise_exception=True)
         return Response(response.data, status=status.HTTP_200_OK)

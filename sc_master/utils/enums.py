@@ -34,7 +34,7 @@ class ErrorCode(Enum):
     INTERNAL_SERVER_ERROR = 1
     GE_CANNOT_CREATE_RESOURCE = 2
     GE_PARSE_ERROR = 3
-    GE_BAD_REQUEST = 4
+    BAD_REQUEST = 4
 
     def __int__(self):
         return self.value

@@ -1,6 +1,6 @@
 from typing import Optional
 from dataclasses import dataclass
-from sc_master.utils.scrpi_client import ScRpiClient, DeviceClientError
+from sc_master.utils.scrpi_client import ScRpiClient
 
 
 @dataclass
@@ -26,4 +26,4 @@ class Section:
 
     color: str
 
-    is_on: bool
+    is_on: Optional[bool]
