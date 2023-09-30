@@ -137,6 +137,7 @@ def validate(mode: Optional[HardwareMode] = None, device_connected: bool = False
 ########################################################################################################################
 
 # TODO: SEGUIR probando el turn_off, y add_sections. volver a probar turn_on (despues de hacer connect)
+# TODO: SEGUIR validar que para agregar secciones tiene que estar todo prendido y las secciones que se agreguen prendidas (is_on true)
 # TODO: agregar la info del device a la salida de todos los endpoints
 # TODO: identificar el device por un nombre (y que aparezca el nombre en todos lados)
 # TODO: ver que hace cuando se conecta un device (si prende o no, capaz conviene que haga un efecto o que sc-master le mande algo para que haga un efecto y se entienda que se conecto alguien)
@@ -153,6 +154,7 @@ def validate(mode: Optional[HardwareMode] = None, device_connected: bool = False
 # TODO: se podría hacer un wrapper del logger para que en sc_master/utils/decorators.py se configure solo para logear errores que no sean 400
 # TODO: hacer que el turn off apague todas las secciones
 # TODO: retornar cantidad de leds en la response
+
 
 class DeviceController:
     """

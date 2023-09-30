@@ -60,7 +60,7 @@ def map_error_code_to_http_status(e: ErrorCode) -> int:
         raise Exception(f'Invalid error code #{int(e)}')
 
     if \
-            e == ErrorCode.ST_EDITION_NOT_ALLOWED \
+            e == ErrorCode.SECTION_EDITION_NOT_ALLOWED \
             or e == ErrorCode.SY_MODE_ERROR \
             or e == ErrorCode.GE_BAD_REQUEST \
             or e == ErrorCode.GE_PARSE_ERROR:

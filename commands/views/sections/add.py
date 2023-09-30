@@ -34,7 +34,7 @@ class Add(APIView):
     def put(self, _, serialized_request):
         sections_to_add = serialized_request.validated_data.get('sections')
         sections_to_add = list(map(lambda s: Section(
-            s.get('start'), s.get('end'), s.get('color'), True), sections_to_add))
+            s.get('start'), s.get('end'), s.get('color'), False), sections_to_add))
         result = DeviceController.add_sections(sections_to_add)
         response = ResponseSerializer(data=asdict(result))
         response.is_valid(raise_exception=True)

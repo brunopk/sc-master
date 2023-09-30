@@ -170,7 +170,6 @@ def validate_request(serializer_class):
 
     def decorator(view_func):
 
-        # noinspection PyShadowingNames
         @wraps(view_func)
         def _wrapped_view_func(self, request, *args, **kwargs):
             # self: instance of the class with the decorated method

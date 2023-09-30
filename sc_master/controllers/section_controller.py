@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 from dataclasses import dataclass
 from sc_master.utils.dataclasses import Section, Device
 from sc_master.utils.enums import ErrorCode
@@ -14,22 +14,6 @@ class SectionAux(Section):
     hw_id: str
 
 ########################################################################################################################
-#                                                     ERROR CLASSES                                                    #
-########################################################################################################################
-
-
-class SectionEditionNotAllowed(ApiError):
-
-    def __init__(self, *args):
-        super().__init__(*args)
-
-    def get_message(self) -> str:
-        return 'Edition not allowed.'
-
-    def get_error_code(self) -> ErrorCode:
-        return ErrorCode.ST_EDITION_NOT_ALLOWED
-
-########################################################################################################################
 #                                                        MAIN CLASS                                                    #
 ########################################################################################################################
 
@@ -42,7 +26,7 @@ class SectionController:
 
     _sections: List[SectionAux] = []
 
-    _devices: List[Device] = []
+    _device: Optional[Device] = None
 
     ####################################################################################################################
     #                                                 PRIVATE STATIC METHODS                                           #
@@ -156,8 +140,10 @@ class SectionController:
 
         if len(self._sections) == 0:
             raise ApiError(ErrorCode.SECTION_NOT_FOUND)
-        if data.end >= self._devices[0].number_of_led:
-            raise SectionEditionNotAllowed()
+        
+        # TODO: FIX DEVICE NONE
+        if data.end >= self._device.number_of_led:
+            raise ApiError(ErrorCode.SECTION_EDITION_NOT_ALLOWED)
 
         aux_list = self._copy_section_list(self._sections)
         try:
@@ -240,5 +226,5 @@ class SectionController:
         """
         return self._sections
 
-    def update_device_list(self, devices: List[Device]):
-        self._devices = devices
+    def set_connected_device(self, new_device: Device):
+        self._device = new_device
