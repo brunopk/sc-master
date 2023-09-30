@@ -149,7 +149,7 @@ def validate(mode: Optional[HardwareMode] = None, device_connected: bool = False
 # TODO: usar solo prefijos para cuando sean errores de device (por ejemplo GE_INTERNAL_ERROR -> INTERNAL_ERROR)
 # TODO: cuando "is_system_on": false, no deberia mostrar "is_on": true en cada seccion
 # TODO: validar doble turn_on
-# TODO: do the same changes in https://github.com/brunopk/sc-master/pull/15/files#diff-d9df4f0f4d960efe93e5b9e9d003753f112fc5cd9d1a59b2ef5c483fd066a67f for all commands
+# TODO: do the same changes in https://github.com/brunopk/sc-master/pull/15/files#diff-d9df4f0f4d960efe93e5b9e9d003753f112fc5cd9d1a59b2ef5c483fd066a67f for all commands (add command, edit, remove, etc)
 # TODO: estaría bueno que en los datos del device se muestre el puerto origen para poder matchearlo con lo que muestra sc-rpi
 # TODO: averiguar si esta bien retornar 503 cuando no hay un device conectado
 # TODO: hacer test unitarios
