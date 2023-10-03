@@ -1,11 +1,11 @@
 from typing import List, Optional
 from dataclasses import dataclass
 from functools import wraps
-from rest_framework import status
+from dataclasses import asdict
 from sc_master.controllers.section_controller import SectionController
 from sc_master.utils.dataclasses import Section, Device
 from sc_master.utils.errors import ApiError
-from sc_master.utils.enums import ErrorCode, HardwareMode
+from sc_master.utils.enums import ErrorCode, HardwareMode, hardware_mode_dict_factory
 from sc_master.utils.scrpi_client import ScRpiClient
 
 
@@ -90,6 +90,11 @@ class DeviceControllerResult:
     device_info: Optional[DeviceInfo] = None
 
     static_design: Optional[List[Section]] = None
+
+def device_controller_result_dict_factory(data):
+    mode = asdict(data.get('mode'), dict_factory=...
+    
+    
 
 ########################################################################################################################
 #                                                    OTHER FUNCTIONS                                                   #

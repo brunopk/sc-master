@@ -1,4 +1,5 @@
 from enum import Enum
+from dataclasses import dataclass
 
 
 class HardwareMode(Enum):
@@ -7,7 +8,9 @@ class HardwareMode(Enum):
 
     def __str__(self) -> str:
         return self.name
-
+    
+def hardware_mode_dict_factory(data):
+    return data.name
 
 class ErrorCode(Enum):
 
