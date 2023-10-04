@@ -31,7 +31,7 @@ class Device(Serializer):
     class Meta:
         ref_name = None
 
-    address = CharField(required=True, max_length=7)
+    address = CharField(required=True)
 
     port = IntegerField(required=True)
 
@@ -78,7 +78,7 @@ class CommandResult(Serializer):
 
     is_system_on = BooleanField(required=True)
 
-    mode = Mode(allow_null=False)
+    control_mode = Mode(allow_null=False)
 
     device = Device(required=False, allow_null=True)
 

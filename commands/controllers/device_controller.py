@@ -151,13 +151,22 @@ class DeviceController:
     @classmethod
     def _generate_successful_result(cls) -> CommandResult:
         """
-        Returns an instance of `DeviceControllerResult` using information from class methods and class attributes.
+        Returns an instance of `CommandResult` built from class attributes.
         """
 
-        device_info = DeviceInfo(cls._device) if cls._device is not None else None
+        command_result_as_dict = {'control_mode': cls._mode, 'is_system_on': cls._is_system_on}
+        if cls._device is not None:
+            command_result_as_dict['device'] = {
+                'address': cls._device.address,
+                'port': cls._device.port,
+                'number_of_led': cls._device.number_of_led
+            }
         static_design = cls._section_controller.get_sections()
-        # TODO: SEGUIR
-        return DeviceControllerResult(cls._mode, cls._is_system_on, device_info, static_design)
+        if static_design is not None and len(static_design) > 0:
+            command_result_as_dict['static_design'] = list(map(lambda s: vars(s), static_design))
+        command_result = CommandResult(data=command_result_as_dict)
+        command_result.is_valid(raise_exception=True)
+        return command_result
 
     ####################################################################################################################
     #                                                 PUBLIC STATIC METHODS                                            #
