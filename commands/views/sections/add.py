@@ -7,7 +7,7 @@ from dataclasses import asdict
 from sc_master.serializers.error import Error as ErrorSerializer
 from sc_master.utils.decorators import catch_errors, validate_request
 from sc_master.utils.dataclasses import Section
-from commands.serializers.common.response import Response as ResponseSerializer
+from commands.serializers.common import CommandResult as CommandResultSerializer
 from commands.serializers.sections.add import Add as AddSectionSerializer
 from commands.controllers import DeviceController
 
@@ -20,7 +20,7 @@ class Add(APIView):
 
     @swagger_auto_schema(
         responses={
-            status.HTTP_200_OK: ResponseSerializer(),
+            status.HTTP_200_OK: CommandResultSerializer(),
             status.HTTP_409_CONFLICT: ErrorSerializer(),
             status.HTTP_400_BAD_REQUEST: ErrorSerializer(),
             status.HTTP_404_NOT_FOUND: ErrorSerializer(),
@@ -36,6 +36,4 @@ class Add(APIView):
         sections_to_add = list(map(lambda s: Section(
             s.get('start'), s.get('end'), s.get('color'), False), sections_to_add))
         result = DeviceController.add_sections(sections_to_add)
-        response = ResponseSerializer(data=asdict(result))
-        response.is_valid(raise_exception=True)
-        return Response(response.data, status=status.HTTP_200_OK)
+        return Response(result.data, status=status.HTTP_200_OK)

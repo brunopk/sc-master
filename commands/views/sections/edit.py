@@ -8,7 +8,7 @@ from sc_master.serializers.error import Error as ErrorSerializer
 from sc_master.utils.decorators import catch_errors, validate_request
 from sc_master.utils.dataclasses import Section
 from commands.serializers.sections.edit import Edit as EditSectionSerializer
-from commands.serializers.common.response import Response as ResponseSerializer
+from commands.serializers.common import CommandResult as CommandResultSerializer
 from commands.controllers import DeviceController
 
 
@@ -20,7 +20,7 @@ class Edit(APIView):
 
     @swagger_auto_schema(
         responses={
-            status.HTTP_200_OK: ResponseSerializer(),
+            status.HTTP_200_OK: CommandResultSerializer(),
             status.HTTP_400_BAD_REQUEST: ErrorSerializer(),
             status.HTTP_404_NOT_FOUND: ErrorSerializer(),
             status.HTTP_409_CONFLICT: ErrorSerializer(),
@@ -38,6 +38,4 @@ class Edit(APIView):
             serialized_request.data.get('color'),
             None)
         result = DeviceController.edit_section(index, edited_section)
-        response = ResponseSerializer(data=asdict(result))
-        response.is_valid(raise_exception=True)
-        return Response(response.data, status=status.HTTP_200_OK)
+        return Response(result.data, status=status.HTTP_200_OK)

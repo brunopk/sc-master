@@ -5,7 +5,8 @@ from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status
 from dataclasses import asdict
 from sc_master.utils.decorators import catch_errors
-from commands.serializers.common.response import Response as ResponseSerializer
+from sc_master.serializers.error import Error as ErrorSerializer
+from commands.serializers.common.command_result import CommandResult as CommandResultSerializer
 from commands.controllers import DeviceController
 
 
@@ -17,9 +18,9 @@ class Reset(APIView):
 
     @swagger_auto_schema(
         responses={
-            status.HTTP_200_OK: ResponseSerializer(),
-            status.HTTP_500_INTERNAL_SERVER_ERROR: ResponseSerializer(),
-            status.HTTP_503_SERVICE_UNAVAILABLE: ResponseSerializer()
+            status.HTTP_200_OK: CommandResultSerializer(),
+            status.HTTP_500_INTERNAL_SERVER_ERROR: ErrorSerializer(),
+            status.HTTP_503_SERVICE_UNAVAILABLE: ErrorSerializer()
         }
     )
     @catch_errors()

@@ -56,7 +56,8 @@ class Mode(Field):
         return instance.name
 
 
-class Response(Serializer):
+
+class CommandResult(Serializer):
     """
     Usually DRF serializers are intended to serialize the user input (JSON) to a model that can be handled by the
     framework and may end up in database. In this case, this class is used to pass previously converted dictionaries

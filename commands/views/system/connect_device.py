@@ -7,7 +7,7 @@ from dataclasses import asdict
 from sc_master.serializers.error import Error as ErrorSerializer
 from sc_master.utils.decorators import catch_errors, validate_request
 from commands.serializers.system.connect_device import ConnectDevice as ConnectDeviceSerializer
-from commands.serializers.common.response import Response as ResponseSerializer
+from commands.serializers.common import CommandResult as CommandResultSerializer
 from commands.controllers import DeviceController
 
 # TODO: revisar todos los return code de todos los comandos 
@@ -20,7 +20,7 @@ class ConnectDevice(APIView):
 
     @swagger_auto_schema(
         responses={
-            status.HTTP_200_OK: ResponseSerializer(),
+            status.HTTP_200_OK: CommandResultSerializer(),
             status.HTTP_400_BAD_REQUEST: ErrorSerializer(),
             status.HTTP_409_CONFLICT: ErrorSerializer(),
             status.HTTP_500_INTERNAL_SERVER_ERROR: ErrorSerializer(),
@@ -34,6 +34,4 @@ class ConnectDevice(APIView):
         address = serialized_request.data.get('address')
         port = serialized_request.data.get('port')
         result = DeviceController.connect_device(address, port)
-        response = ResponseSerializer(data=asdict(result))
-        response.is_valid(raise_exception=True)
-        return Response(response.data, status=status.HTTP_200_OK)
+        return Response(result.data, status=status.HTTP_200_OK)

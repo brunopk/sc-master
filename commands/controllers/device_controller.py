@@ -7,6 +7,7 @@ from sc_master.utils.errors import ApiError
 from sc_master.utils.enums import ErrorCode, HardwareMode
 from sc_master.utils.scrpi_client import ScRpiClient
 from commands.controllers.section_controller import SectionController
+from commands.serializers.common import Device as DeviceInfo, CommandResult
 
 
 ########################################################################################################################
@@ -63,46 +64,10 @@ class SystemModeError(ApiError):
     def get_error_code(self) -> ErrorCode:
         return ErrorCode.SY_MODE_ERROR
 
-########################################################################################################################
-#                                                    DATACLASSES                                                       #
-########################################################################################################################
-
-
-@dataclass
-class DeviceInfo:
-
-    address: str
-
-    port: int
-
-    number_of_led: int
-
-    is_on: bool = False
-
-
-@dataclass
-class DeviceControllerResult:
-
-    mode: HardwareMode
-
-    is_system_on: bool = False
-
-    device_info: Optional[DeviceInfo] = None
-
-    static_design: Optional[List[Section]] = None
-
 
 ########################################################################################################################
 #                                                    OTHER FUNCTIONS                                                   #
 ########################################################################################################################
-
-
-def get_device_info(device: Device) -> DeviceInfo:
-    """
-    Maps a `Device` instance to a `DeviceInfo` instance extracting some specific attributes and discarding the rest.
-    """
-    return DeviceInfo(device.address, device.port, device.number_of_led, device.is_on)
-
 
 def validate_mode(cls, mode: HardwareMode) -> bool:
     return mode is not None and cls._mode == mode
@@ -184,13 +149,14 @@ class DeviceController:
     ####################################################################################################################
 
     @classmethod
-    def _generate_successful_result(cls) -> DeviceControllerResult:
+    def _generate_successful_result(cls) -> CommandResult:
         """
         Returns an instance of `DeviceControllerResult` using information from class methods and class attributes.
         """
 
-        device_info = get_device_info(cls._device) if cls._device is not None else None
+        device_info = DeviceInfo(cls._device) if cls._device is not None else None
         static_design = cls._section_controller.get_sections()
+        # TODO: SEGUIR
         return DeviceControllerResult(cls._mode, cls._is_system_on, device_info, static_design)
 
     ####################################################################################################################
@@ -198,7 +164,7 @@ class DeviceController:
     ####################################################################################################################
 
     @classmethod
-    def connect_device(cls, address: str, port: int) -> DeviceControllerResult:
+    def connect_device(cls, address: str, port: int) -> CommandResult:
         """
         Establish connection between sc-master an the device
         """
@@ -217,7 +183,7 @@ class DeviceController:
         return cls._generate_successful_result()
 
     @classmethod
-    def status(cls) -> DeviceControllerResult:
+    def status(cls) -> CommandResult:
         """
         Gets information of the system including each connected device (if any)
         """
@@ -228,7 +194,7 @@ class DeviceController:
 
     @classmethod
     @validate(device_connected=True)
-    def reset(cls) -> DeviceControllerResult:
+    def reset(cls) -> CommandResult:
         """
         Sets the system on STATIC and remove all sections (executing this operation will turn off all the strips).
         """
@@ -261,7 +227,7 @@ class DeviceController:
 
     @classmethod
     @validate(device_connected=True)
-    def turn_off(cls, section_index: Optional[int] = None) -> DeviceControllerResult:
+    def turn_off(cls, section_index: Optional[int] = None) -> CommandResult:
         """
         If index is not None, turns off an specific section. Otherwise, turns off all the strips
         and reset the system to the initial state (like reset method).
@@ -285,7 +251,7 @@ class DeviceController:
 
     @classmethod
     @validate(device_connected=True, mode=HardwareMode.STATIC)
-    def add_sections(cls, sections: List[Section]) -> DeviceControllerResult:
+    def add_sections(cls, sections: List[Section]) -> CommandResult:
         """
         Add a list of sections to the current static design.
 
@@ -301,7 +267,7 @@ class DeviceController:
 
     @classmethod
     @validate(mode=HardwareMode.STATIC, system_on=True)
-    def remove_sections(cls, indexes: List[int]) -> DeviceControllerResult:
+    def remove_sections(cls, indexes: List[int]) -> CommandResult:
         """
         Remove one or more section
 
@@ -315,7 +281,7 @@ class DeviceController:
 
     @classmethod
     @validate(mode=HardwareMode.STATIC, system_on=True)
-    def edit_section(cls, index: int, data: Section) -> DeviceControllerResult:
+    def edit_section(cls, index: int, data: Section) -> CommandResult:
         """
         Change attributes of one section (set data.attr as None to leave data.attr unchanged).
 
