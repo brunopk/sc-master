@@ -4,9 +4,9 @@ from oauth2_provider.contrib.rest_framework import TokenHasReadWriteScope
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status
 from dataclasses import asdict
-from sc_master.controllers.device_controller import DeviceController
 from sc_master.utils.decorators import catch_errors
 from commands.serializers.common.response import Response as ResponseSerializer
+from commands.controllers import DeviceController
 
 
 class TurnOn(APIView):

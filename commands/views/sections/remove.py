@@ -6,8 +6,8 @@ from dataclasses import asdict
 from rest_framework import status
 from commands.serializers.sections.remove import Remove as RemoveSectionSerializer
 from commands.serializers.common.response import Response as ResponseSerializer
+from commands.controllers import DeviceController
 from sc_master.utils.decorators import catch_errors, validate_request
-from sc_master.controllers.device_controller import DeviceController
 
 
 class Remove(APIView):

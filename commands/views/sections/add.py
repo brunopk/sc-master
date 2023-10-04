@@ -5,11 +5,11 @@ from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status
 from dataclasses import asdict
 from sc_master.serializers.error import Error as ErrorSerializer
-from sc_master.controllers.device_controller import DeviceController
 from sc_master.utils.decorators import catch_errors, validate_request
 from sc_master.utils.dataclasses import Section
 from commands.serializers.common.response import Response as ResponseSerializer
 from commands.serializers.sections.add import Add as AddSectionSerializer
+from commands.controllers import DeviceController
 
 
 class Add(APIView):

@@ -5,10 +5,10 @@ from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status
 from dataclasses import asdict
 from sc_master.serializers.error import Error as ErrorSerializer
-from sc_master.controllers.device_controller import DeviceController
 from sc_master.utils.decorators import catch_errors, validate_request
 from commands.serializers.system.connect_device import ConnectDevice as ConnectDeviceSerializer
 from commands.serializers.common.response import Response as ResponseSerializer
+from commands.controllers import DeviceController
 
 # TODO: revisar todos los return code de todos los comandos 
 

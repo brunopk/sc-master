@@ -6,8 +6,8 @@ from rest_framework import status
 from dataclasses import asdict
 from sc_master.utils.decorators import catch_errors
 from sc_master.serializers.error import Error as ErrorSerializer
-from sc_master.controllers.device_controller import DeviceController
 from commands.serializers.common.response import Response as ResponseSerializer
+from commands.controllers import DeviceController
 
 
 class TurnOn(APIView):
