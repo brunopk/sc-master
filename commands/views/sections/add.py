@@ -36,4 +36,6 @@ class Add(APIView):
         sections_to_add = list(map(lambda s: Section(
             s.get('start'), s.get('end'), s.get('color'), False), sections_to_add))
         result = DeviceController.add_sections(sections_to_add)
-        return Response(asdict(result), status=status.HTTP_200_OK)
+        response = ResponseSerializer(data=asdict(result))
+        response.is_valid(raise_exception=True)
+        return Response(response.data, status=status.HTTP_200_OK)
