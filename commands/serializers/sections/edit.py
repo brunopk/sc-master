@@ -15,10 +15,4 @@ class Edit(Serializer):
         return validate_hex(value)
 
     def validate(self, attrs):
-        validate_section_limits(attrs)
-
-    def update(self, instance, validated_data):
-        pass
-
-    def create(self, validated_data):
-        pass
+        return validate_section_limits(attrs)

@@ -1,4 +1,5 @@
-from rest_framework.serializers import Serializer, IntegerField, CharField
+from typing import List
+from rest_framework.serializers import Serializer, IntegerField, CharField, ListSerializer
 from sc_master.utils.helpers import validate_section_limits, validate_hex
 
 
@@ -25,4 +26,4 @@ class Add(Serializer):
     class Meta:
         ref_name = 'CmdAddSection'
 
-    sections = Section(many=True)
+    sections = Section(many=True, allow_empty=False, required=True)
