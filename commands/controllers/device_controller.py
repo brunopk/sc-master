@@ -107,6 +107,7 @@ def validate(mode: Optional[HardwareMode] = None, device_connected: bool = False
 # TODO: 3 SEGUIR validar que para agregar secciones tiene que estar todo prendido y las secciones que se agreguen prendidas (is_on true)
 # TODO: 4 HACER que el turn off apague todas las secciones
 # TODO: 5 add section with is_on = True just after creating (adding) it
+# TODO: 6 fix remove sections
 # TODO: agregar la info del device a la salida de todos los endpoints
 # TODO: identificar el device por un nombre (y que aparezca el nombre en todos lados)
 # TODO: ver que hace cuando se conecta un device (si prende o no, capaz conviene que haga un efecto o que sc-master le mande algo para que haga un efecto y se entienda que se conecto alguien)
@@ -284,6 +285,7 @@ class DeviceController:
         """
         section_ids = list(map(cls._section_controller.get_section_hw_id, indexes))
         cls._section_controller.validate_deletion(indexes)
+        # TODO: fix
         cls._devices[0].client.section_remove(section_ids)
         cls._section_controller.remove_sections(indexes)
         return cls._generate_successful_result()
@@ -299,7 +301,7 @@ class DeviceController:
         """
         cls._section_controller.validate_edition(index, data)
         section_hw_id = cls._section_controller.get_section_hw_id(index)
-        cls._devices[0].client.section_edit(
+        cls._device.client.section_edit(
             section_hw_id,
             data.start,
             data.end,

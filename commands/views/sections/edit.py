@@ -37,5 +37,5 @@ class Edit(APIView):
             serialized_request.data.get('end'),
             serialized_request.data.get('color'),
             None)
-        result = DeviceController.edit_section(index, edited_section)
+        result = DeviceController.edit_section(int(index), edited_section)
         return Response(result.data, status=status.HTTP_200_OK)

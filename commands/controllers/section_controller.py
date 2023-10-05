@@ -90,12 +90,11 @@ class SectionController:
     def edit_section(self, index: int, data: Section):
         """
         Edits the section identified by its index.
-        Use the corresponding validation before invoking this method.
         """
-        self._sections[index].start = data.start
-        self._sections[index].end = data.end
-        self._sections[index].is_on = data.is_on
-        self._sections[index].color = data.color
+        self._sections[index].start = data.start if data.start is not None else self._sections[index].start
+        self._sections[index].end = data.end if data.end is not None else self._sections[index].end
+        self._sections[index].is_on = data.is_on if data.is_on is not None else self._sections[index].is_on
+        self._sections[index].color = data.color if data.color is not None else self._sections[index].color
 
     def remove_sections(self, indexes: List[int]):
         """
@@ -157,7 +156,7 @@ class SectionController:
         aux_list = self._sort_sections(aux_list)  # type: ignore
         section_after_edition = self._get_section_by_limits(aux_list, data.start, data.end)  # type: ignore
         if aux_list.index(section_after_edition) != index:
-            raise SectionEditionNotAllowed()
+            raise ApiError(ErrorCode.SECTION_EDITION_NOT_ALLOWED)
 
     def validate_deletion(self, indexes: List[int]):
         """
