@@ -102,12 +102,11 @@ def validate(mode: Optional[HardwareMode] = None, device_connected: bool = False
 #                                                     MAIN CLASS                                                       #
 ########################################################################################################################
 
-# TODO: 1 CONTINUE TESTING EDIT COMMAND
-# TODO: 2 SEGUIR probando el turn_off, y add_sections. volver a probar turn_on (despues de hacer connect)
-# TODO: 3 SEGUIR validar que para agregar secciones tiene que estar todo prendido y las secciones que se agreguen prendidas (is_on true)
-# TODO: 4 HACER que el turn off apague todas las secciones
-# TODO: 5 add section with is_on = True just after creating (adding) it
-# TODO: 6 fix remove sections
+# TODO: 1 SEGUIR probar secuencia : apagar - prender - apagar - prender
+# TODO: 2 SEGUIR validar que para agregar secciones tiene que estar todo prendido y las secciones que se agreguen prendidas (is_on true)
+# TODO: 3 HACER que el turn off apague todas las secciones
+# TODO: 4 add section with is_on = True just after creating (adding) it
+# TODO: 5 fix remove sections
 # TODO: agregar la info del device a la salida de todos los endpoints
 # TODO: identificar el device por un nombre (y que aparezca el nombre en todos lados)
 # TODO: ver que hace cuando se conecta un device (si prende o no, capaz conviene que haga un efecto o que sc-master le mande algo para que haga un efecto y se entienda que se conecto alguien)
@@ -220,18 +219,22 @@ class DeviceController:
         Turns on an specific section or all the strips.
         """
         if section_index is not None:
-            if cls._section_controller.is_section_on(section_index):
-                raise ApiError(ErrorCode.SECTION_ALREADY_ON)
+            # if cls._section_controller.is_section_on(section_index):
+            #    raise ApiError(ErrorCode.SECTION_ALREADY_ON)
 
             section_id = cls._section_controller.get_section_hw_id(section_index)
             cls._device.client.turn_on(section_id)
             cls._section_controller.set_section_on(section_index)
         else:
-            if cls._device.is_on: 
+            if cls._is_system_on:
                 raise ApiError(ErrorCode.LIGHTS_ALREADY_ON)
 
-            cls._device.client.turn_on()
-            cls._is_system_on = True
+            try:
+                cls._device.client.turn_on()
+                cls._is_system_on = True
+                cls._device.is_on = True
+            except Exception as ex:
+                raise ex
 
         return cls._generate_successful_result()
 
@@ -251,11 +254,15 @@ class DeviceController:
             cls._device.client.turn_off(section_id)
             cls._section_controller.set_section_off(section_index)
         else:
-            if not cls._device.is_on: 
+            if not cls._is_system_on:
                 raise ApiError(ErrorCode.LIGHTS_ALREADY_OFF)
 
-            cls._device.client.turn_off()
-            cls._is_system_on = False
+            try:
+                cls._device.client.turn_off()
+                cls._is_system_on = False
+                cls._device.is_on = False
+            except Exception as ex:
+                raise ex
 
         return cls._generate_successful_result()
 

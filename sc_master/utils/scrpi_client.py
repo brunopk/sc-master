@@ -126,7 +126,7 @@ class ScRpiClient:
         self._send_request(cmd)
         return self._recv_response(cmd)
 
-    def turn_on(self, section_id: str = None) -> dict:
+    def turn_on(self, section_id: str = None):
         """
         Turns on a specific sections or the whole strip
 
@@ -138,9 +138,9 @@ class ScRpiClient:
                 'section_id': section_id
             }
         self._send_request(cmd)
-        return self._recv_response(cmd)
+        self._recv_response(cmd)
 
-    def turn_off(self, section_id: str = None) -> dict:
+    def turn_off(self, section_id: str = None):
         """
         Turns on a specific sections or the whole strip
 
@@ -152,7 +152,7 @@ class ScRpiClient:
                 'section_id': section_id
             }
         self._send_request(cmd)
-        return self._recv_response(cmd)
+        self._recv_response(cmd)
 
     def section_edit(self, section_id: str, start: int = None, end: int = None, color: str = None) -> dict:
         """
